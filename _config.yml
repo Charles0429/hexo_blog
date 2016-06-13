@@ -75,3 +75,5 @@ deploy:
   type: git
   repository: git@github.com:Charles0429/Charles0429.github.io.git
   branch: master
+
+duoshuo_shortname: oserror
