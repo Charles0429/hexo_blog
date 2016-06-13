@@ -275,8 +275,8 @@ mathjax:
 duoshuo_info:
   ua_enable: true
   admin_enable: false
-  user_id: 0
-  #admin_nickname: Author
+  user_id: 3109763
+  admin_nickname: Charles0429
 
 
 # Facebook SDK Support.
