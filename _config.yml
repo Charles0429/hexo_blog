@@ -13,10 +13,11 @@ avatar: /images/avatar.jpg
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: http://oserror.com
 root: /
-permalink: :year/:month/:day/:title/
+permalink: :category/:id/
 permalink_defaults:
+  lang: en
 
 # Directory
 source_dir: source
@@ -41,7 +42,7 @@ future: true
 highlight:
   enable: true
   line_number: true
-  auto_detect: false
+  auto_detect: true
   tab_replace:
 
 # Category & Tag
@@ -78,3 +79,9 @@ deploy:
 
 duoshuo_shortname: oserror
 baidu_analytics: e46cc2553dc9a888558de28aec7a1dc4
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+rss:
