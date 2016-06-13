@@ -3,6 +3,8 @@ title: Effective C++ 学习笔记
 date: 2016-06-05 15:38:33
 categories: 语言
 tags:
+  - C/C++
+  - 学习笔记
 ---
 
 # Effective C++学习笔记
