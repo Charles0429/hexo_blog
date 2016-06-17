@@ -11,6 +11,7 @@ tags:
 本文是学习The go programming language的总结，全文的组织结构如下：
 
 - Program Structure
+- Basic Data Types
 - todo
 
 
@@ -326,4 +327,253 @@ if f, err := os.Open(fname),; err != nil { //complie error: unused f
 
 f.ReadByte() //compile error: undefined f
 f.Close() // compile error: undefined f
+```
+
+# 3. Basic Data Types
+
+GO的Data Type有四大类：basic types，aggregate types，reference types和interface types。Basic types包括numbers，strings和booleans；Aggregate types包括array和struct；Reference types包括pointers，slices，maps，functions和channels。
+
+## 3.1 Integers
+
+GO的numbers类型包括integers，floating-point numbers和complex numbers。
+
+对于integers，有四种有符号整数和四种无符号整数。
+
+- int8, int16, int32和int64
+- uint8, uint16, uint32和uint64
+
+除了带字节大小的类型之外，还包括int和uint，可能是32bit或者64bit，由编译器决定，编程时不要假定这个大小。
+
+rune是int32的named type，用来存储单个unicode字符。
+
+byte是int8的named type。
+
+uintptr的大小可以存储下系统中任意的内存地址，一般用来和C Library交互的时候。
+
+采用二进制补码的方式编码，所以对于int8来讲，其范围为[-128, 127]
+
+操作符的优先级如下
+
+```go
+*	/	%	<<	>>	&	&^
++	-	|	^
+==	！=	<	<=	>	>=
+&&
+||
+```
+对于%操作符，符号是跟着被除数走的，例如`-5%3`和`-5%-3`的余数都是-2。
+
+对于算术运算，可能会溢出
+
+```go
+var u uint8 = 255
+fmt.Println(u, u+1, u*u) //255 0 1
+```
+
+对于移位操作符
+
+- `<<`不管是有符号数或者无符号数，都是末尾补0
+- `>>`对于有符号数，会在左边补符号位，对于无符号数，会在末尾补0
+
+对于遍历操作，一般用有符号数
+
+```go
+var i uint = 0
+for ; i >= 0; i-- {
+
+}
+```
+
+上面是个死循环，因为uint一定是大于或等于0的，故遍历的索引一般用有符号数。
+
+## 3.2 Floating-Point Numbers
+
+GO提供两种float类型，即float32和float64，采用IEEE 754标准。
+
+## 3.3 Complex Numbers
+
+GO提供两种complex类型，即complex64和complex128，底层组件分别用float32和float64。
+
+使用例子如下
+
+```go
+var x complex128 = complex(1, 2)  //1 + 2i
+var y complex128 = complex(3, 4)  //3 + 4i
+fmt.Println(x*y)                  //-5 + 10i
+fmt.Println(real(x*y))			  //-5
+fmt.Println(imag)(x*y))			  //10
+```
+## 3.4 Booleans
+
+bool类型的值只有false和true两种。bool类型和number类型之间没有隐式的转换，一般通过如下方式
+
+```go
+func btoi(b bool) int {
+	if b {
+    	return 1
+    }
+    return 0
+}
+
+func itob(i int) bool {
+	return i != 0
+}
+```
+
+## 3.5 Strings
+
+内置len函数可以计算string类型的长度。
+
+substring操作通过s[i:j]，表示从i开始，共j-i个字符，因此，不包括j。
+
+i的默认值为0，j的默认值为len(s)，因此
+
+```go
+s[:5] = s[0:5]
+s[7:] = s[7:len(s)]
+s[:] = s[0:len(s)]
+```
+string类型是不可修改的，例如
+
+```
+s = "hello"
+s += “world”
+s[0] = 'L' // compile error
+```
+s开始指向"hello"字符串，执行`+=`操作后，并不是修改原来字符串变成"hello world"，而是完全分配新的内存空间，把"hello world"存进去，然后修改s指向这块内存空间。
+
+因为string的不可修改，所以substring可以和原来的string共享内存空间。
+
+### 3.5.1 String Literals
+
+- 用双引号，例如"hello world"
+- 用\来做转义
+
+GO还提供\`...\`来作为raw string literal的声明，即里面的转义字符像\，换行都不会特殊处理，所以，可以放到多行。一般可以放\等特别多的字符串。
+
+### 3.5.2 Unicode
+
+Unicode是为了解决各国文字无法在ASCII表示出来的困境，Unicode也分为多种
+
+- UTF-32，每个Unicode字符都采用32位存储
+- UTF-8，每个Unicode字符的存储空间不定，采用前缀的方式来区分
+
+### 3.5.3 UTF-8
+
+UTF-32的缺点有
+
+- 对于普通的ASCII也要采用32位存储，不兼容
+- 对于常用的65536个Unicode字符，其实用16位就行，32位会浪费大量的存储空间
+
+GO里面有专门的package`unicode/utf8`来处理UTF-8格式的编解码等。
+
+## 3.6 Constants
+
+const类型的语义是在运行期间，变量的值不会发生变化。const可用于boolean，string和number。
+
+### 3.6.1 The Constant Genrator itoa
+
+和C不同的是，const默认的是和上一个值相同，例如
+
+```go
+const (
+    a = 1
+    b
+    c
+)
+```
+此时，b和c都是为1。
+
+GO里边提供itoa来实现C中enum值自增的方法，如下
+
+```go
+type Weekday int
+const (
+    Sunday Weekday = itoa
+    MOnday
+    Tuesday
+    Wednesday
+    Thursday
+    Friday
+    Saturday
+)
+```
+
+上面定义中，Sunday为0，Monday为1，以此类推。
+
+还有如下用法
+
+```go
+type Flags uint
+
+const (
+    FlagUp flags = 1 << itoa
+    FlagBroadcast
+    FlagLoopback
+    FlagPointToPoint
+    FlagMulticast
+)
+```
+当itoa递增时，每个const会赋值成`1 << itoa`对应的值。
+
+更有趣的有
+
+```go
+const (
+	_ = 1 << (10 * itoa)
+    KiB //1024
+    MiB //1048576
+    GiB //1073741824
+    TiB
+    PiB
+    EiB
+    ZiB
+    YiB
+)
+```
+
+### 3.6.2 Untyped Constants
+
+untyped const可以不绑定到特定的类型，这样的const一般至少有256位的精度，所以，可以参与更高精度的计算。在赋值的时候，untyped const会隐式的转换到对应的类型，例如
+
+```go
+var x float32 = math.Pi //untyped const
+var y float64 = math.Pi
+var z complex128 = math.Pi
+
+const Pi64 float64 = math.Pi
+var x float32 = float32(Pi64) //需要转类型转成，因为不是untyped const
+var y float64 = Pi64
+var z complex128 = complex128(Pi64)
+```
+共有六种类型的untyped const，分别是untyped boolean，untyped integer，untyped rune，untyped rune，untyped floating-point，untyped complex和untyped string。
+
+例如，true和false是untyped boolean，字符串常量是untyped string。
+
+```go
+var f float64 = 3 + 0i  //untyped complex -> float64
+f = 2                   //untyped integer -> float64
+f = 1e123				//untyped floating-point -> float64
+f = 'a'					//untyped rune -> float64
+```
+这种隐式的转换需要左边的变量能表示右边的值，有些情况是不能转换的，如下
+
+```go
+const (
+    deadbeef = 0Xdeadbeef
+    a = uint32(deadbeef) // uint32 with value 3735928559
+    b = float32(deadbeef) // float32 with value 
+    d = int32(deadbeef) // compile error: overflow
+    e = float64(1e309) //compile error: const overflows float64
+    f = uint(-1) //compile error: const underflows uint
+)
+```
+
+在变量声明中，如果没有指定类型，会由untyped const来隐式地决定类型
+
+```go
+i := 0  //integer
+r := '\000' //rune
+f := 0.0 //float64
+c := 0i //complex128
 ```
