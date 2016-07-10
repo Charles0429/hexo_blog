@@ -631,6 +631,264 @@ func Distance(p, q Point) float64 {
 func (p Point) Distance(q Point) float64 {
 	return math.Hypot(q.X-p.X, q.Y-p.Y)
 }
+
+p := Point{1, 2}
+q := Point{4, 6}
+fmt.Println(Distance(p, q)) //function call
+fmt.Println(p.Distance(q)) //method
 ```
+
 上面额外的参数p称为method receiver，在GO中不用使用特殊的this或self来命名method receiver，因为receiver的名称会被经常使用，因此，建议用短的变量名来定义它。
+
+调用method和C++调用成员函数类似，通过对象名+ `.` + method名来调用，需要注意的是，普通的函数和method是可以有相同的名称的。
+
+p.Distance称作是selector，因为，它会为找到对象p的合适的方法Distance；selector也用来访问struct类型的field，因此，对于struct类型，method和field的命名不能相同，否则会产生冲突。
+
+每个类型都有自己的method namespace，因此，不同类型的type，可以定义同名的method，例如
+
+```go
+type Path []Point
+
+func (path Path) Distance() float64 {
+	sum := 0.0
+    for i := range path {
+    	if i > 0 {
+        	sum += path[i-1].Distance(path[i])
+        }
+    }
+}
+```
+
+path是named slice类型，对于这种类型GO也支持定义method，实际上，在GO中，支持对任意的named type定义method。
+
+在GO中，定义method的时候，不推荐再带上包的名字了，这样会比较累赘，例如
+
+```go
+import "gopl.io/ch6/geometry"
+
+perim := geometry.Path{{1, 2}, {2, 2}, {3, 4}, {5, 6}}
+fmt.Println(geometry.PathDistance(perim))
+fmt.Println(perim.Distance())
+```
+对于path的method，推荐用`Distance`而不是`PathDistance`。
+
+## Methods with a Pointer Receiver
+
+由于GO中，是以值传递的方式传函数参数的，如果希望method函数能够修改对象内部的状态的话，则需要定义receiver type为对象的指针，如下
+
+```go
+func (p *Point) ScaleBy(factor float64) {
+	p.X *= factor
+    p.Y *= factor
+}
+```
+
+一般地，只要Point的任何method有pointer receiver，那么推荐其他method也定义一个pointer receiver。因为GO支持pointer receiver，因此，对本身是pointer类型的named type，不支持定义method。
+
+```go
+type P *int
+func (P) f() { /* do something */ } //compile error
+```
+使用pointer receiver的方法如下
+
+```go
+r := &Point{1, 2}
+r.ScaleBy(2)
+fmt.Println(*r)
+
+p := Point{1, 2}
+pptr := &p
+pptr.ScaleBy(2)
+fmt.Println(p)
+
+p := Point{1, 2}
+(&p).ScaleBy(2)
+fmt.Println(p)
+```
+
+对于后两种用法，GO提供隐式地支持，即对于一个p，如果定义了*Point类型的receiver，GO会自动动在&p上调用该receiver，但这种支持仅限于变量，对于临时的值是不支持的，因为无法获得它们的地址。
+
+```go
+Point{1, 2}.ScaleBy(2) // compile error
+```
+
+对于一个*Pointer类型的变量，GO也会隐式地调用Point.Distance函数，下面两种使用方式是等价的
+
+```go
+pptr.Distance(q)
+(*pptr).Distance(q)
+```
+如上，采用第一种使用方式的时候，GO也会隐式地转成第二种使用方式。
+
+如果对于一个named type T，它们所有的method的receiver都是T，而不是*T，那么拷贝是安全的，因为任意的method都会拷贝一份参数到函数中；但如果任意的method有pointer类型的receiver，那么拷贝是不安全的，例如，拷贝一份`bytes.Buffer`会造成它们共享底层的字节数组，如果同时使用这两个变量的话，可能会造成互相干扰。
+
+### Nil is a Valid Reciever Value
+
+Nil是可以作为receiver值的，如下
+
+```go
+type IntList struct {
+	Value int
+    Tail *IntList
+}
+
+func (list *IntList) sum() int {
+	if list == nil {
+    	return 0
+    }
+    return list.Value + list.Tail.Sum()
+}
+```
+
+## Composing Types by Struct Embedding
+
+和field一样，通过匿名的struct组合，大的struct可以直接调用struct内部的field的method，如下
+
+```go
+type Point struct {X, Y float64}
+type ColoredPoint struct {
+	Point
+    Color color.RGBA
+}
+
+var cp ColoredPoint
+cp.X = 1
+cp.ScaleBy(2) // calls the method of Point
+fmt.Println(p.Distance(q.Point))
+```
+
+上面的功能相当于编译器自动帮我们实现了以下代码
+
+```go
+func (p ColoredPoint) Distance(q Point) float64 {
+	return p.Point.Distance(q)
+}
+
+func (p *ColoredPoint) ScaleBy(factor float64) {
+	p.Point.ScaleBy(factor)
+}
+```
+
+一个struct可以有多个匿名的field，因此，它们的method都会自动提升给大的struct
+
+```go
+type ColoredPoint {
+	Point
+    color.RGBA
+}
+```
+
+Point和color.RGBA的method都会自动提升给ColoredPoint。
+
+## Method Values and Expressions
+
+通常的，我们在一个操作中select和call一个method，例如`p.Distance()`，但是，也可以把select和call分开。selector p.Distance会产生一个method value，一个method绑定到了特定的对象p，这个函数可以保存起来供后面重复使用。
+
+```go
+p := Point{1, 2}
+q := Point{4, 5}
+distanceFromP := p.Distance
+fmt.Println(distanceFromP(q))
+
+ScaleP := p.ScaleBy
+ScaleP(2)
+ScaleP(3)
+ScaleP(10)
+```
+
+method value通常在你需要一个变量表示多个method value中的一个的时候，非常有用，例如
+
+```go
+type Point struct {X, Y float64}
+func (p Point) Add(q Point) Point {return Point{p.X + q.X, p.Y + q.Y}}
+func (p Point) Sub(q point) Point {return Point{p.X - q.X, p.Y - q.Y}}
+
+type path []Point
+func (path Path) TranslateBy(offset Point, add bool) {
+	var op func(p, q Point) Point
+    if add {
+    	op = Point.Add
+    } else {
+    	op = Point.Sub
+    }
+    for i := range path {
+    	path[i] = op(path[i], offset)
+    }
+}
+```
+
+## Example: Bit Vector Type
+
+GO中没有set类型，虽然有时可以用map[T]bool来代替，但是，有时候bit set可以解决很多空间，如下
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type IntSet struct {
+	words []uint64
+}
+
+func (s *IntSet) Has(x int) bool {
+	word, bit := x/64, uint(x%64)
+	return word < len(s.words) && s.words[word]&(1<<bit) != 0
+}
+
+func (s *IntSet) Add(x int) {
+	word, bit := x/64, uint(x%64)
+	for word >= len(s.words) {
+		s.words = append(s.words, 0)
+	}
+	s.words[word] |= 1 << bit
+}
+
+func (s *IntSet) UnionWith(t *IntSet) {
+	for i, tword := range t.words {
+		if i < len(s.words) {
+			s.words[i] |= tword
+		} else {
+			s.words = append(s.words, tword)
+		}
+	}
+}
+
+func main() {
+	var s IntSet
+	s.Add(100)
+	fmt.Println(s.Has(100))
+}
+
+```
+
+## Encapsulation
+
+当客户端无法访问一个变量或方法时，我们称作对象的该方法和变量被封装了。GO只有一个控制访问的途径，即大写的是exported，因此，为了封装一个对象，我们可以把它设置成struct。
+
+例如IntSet
+
+```go
+type IntSet struct {
+	words []uint64
+}
+```
+我们也可以直接定义IntSet成[]uint64，但这样客户端就可以直接修改IntSet内部的值了。
+
+封装有三大好处
+
+- 客户端不能直接修改内部的值，只需要调用几条语句就能完成复杂的功能
+- 对客户端隐藏实现细节
+- 防止客户端修改内部状态到非法的值
+
+# Interfaces
+
+TODO
+
+
+
+
+
+
 
