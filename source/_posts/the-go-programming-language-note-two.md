@@ -884,7 +884,692 @@ type IntSet struct {
 
 # Interfaces
 
-TODO
+在Go中，interface为对一组函数的抽象，和其他语言不同的时，GO的接口是自动匹配的，只要一个类型有接口相应的method，那么这个类型就会自动成为接口。
+
+本章中，我们先讨论interface的基础，然后介绍标准库的几个重要的接口，最后，我们讨论`type assertions`和`type switches`。
+
+## Interface as Contracts
+
+在GO中，Interface是一种抽象类型，它不展示任何的内部的值，只提供一些method。因此，给定一个interface，你只知道它的几个method，对于内部的实现是无法知道的。
+
+在本书中，我们用了像`fmt.Printf`和`fmt.Sprintf`等函数，这两个函数都是基于`fmt.Fprintf`实现的，如下
+
+```go
+package fmt
+func Fprintf(w io.Writer, format string, args ...interface{})(int, error)
+
+func Printf(format string, args ...interface{})(int, error) {
+	return Fprintf(os.Stdout, format, args...)
+}
+
+func Sprintf(format string, args ...interface{}) string {
+	var buf bytes.Buffer
+    Fprintf(&buf, format, args...)
+    return buf.String()
+}
+```
+上面io.Writer是interface类型，其定义如下
+
+```go
+package io
+type Writer interface {
+	Write(p []byte)(n int, err error)
+}
+```
+Fprintf函数只要求它的第一个参数类型必须实现了Write函数，而具体是怎么实现的，Fprintf是不管的。我们可以自定义一个Writer来实现Write函数，如下
+
+```go
+type ByteCOunter int
+
+func (c *ByteCounter) Write(p []byte) (int, error) {
+	*c += ByteCounter(len(p))
+    return len(p), nil
+}
+
+var c ByteCounter
+c.Write([]byte("hello"))
+fmt.Println(c)
+
+c = 0
+var name = "Dolly"
+fmt.Fprintf(&c, "hello, %s", name)
+fmt.Println(c)
+```
+Fprintf会调用write函数，接着c中就会写入字母的个数，然后通过`Println`输出。
+
+fmt package中还有一个很常见的interface，为`fmt.Stringer`，如下
+
+```go
+package fmt
+type Stringer interface {
+	String() string
+}
+```
+
+## Interface Types
+
+一个interface类型指定了一组method，一个具体的类型如果实现了interface里的所有方法，那么这个类型会自动地被认为是该interface的一个实例。
+
+例如，`Reader`代表任何可以读数据的interface，而`Closer`则是任何可以关闭的值，例如网络链接等。
+
+```go
+package io
+type Reader interface {
+	Read(p []byte) (n int, err error)
+}
+type Closer interface {
+	Close() error
+}
+```
+
+也可以基于现有的interface组合出新的interface，例如
+
+```go
+type ReadWriter interface {
+	Reader
+    Writer
+}
+type ReadWriteCloser interface {
+	Reader
+    Writer
+    Closer
+}
+```
+上面的跟结构体的匿名field一样，method会自动地提升到大的interface中，如果不用匿名filed方式，则需要重新手写方法名，如下
+
+```go
+type ReadWriter interface {
+	Read(p []byte) (n int, err error)
+    Writer
+}
+```
+## Interface Satisfication
+
+当一个类型包含某个interface中所有的methods时，则该类型satisfies这个interface。例如，*os.File satisfies io.Reader,Writer和Closer。
+
+在GO中，当这个类型satisfies这个interface时,则说具体的类型是某个interface，，因此*os.File是io.Reader,Writer和Closer。
+
+对于interface，赋值的规则是当且仅当表达式是某个interface时，才能够进行赋值，例如
+
+```go
+var w io.Writer
+w = os.Stdout
+w = new(bytes.Buffer)
+w = time.Second //compile error
+
+var rwc io.ReadWriteCloser
+rwc = os.Stdout
+rwc = new(bytes.Buffer) //compile error, lacks close methods
+```
+上述规则也适用于右边是本身也是interface的情况
+
+```go
+
+w = rwc
+rwc = w // compile error
+```
+
+在method一章中，我们知道当一个类型T的变量，是可以隐式地使用`*T`为receiver的method的，但临时的值是不行的，这可能会造成T类型比`*T`类型能satisfies较少的interface，如下
+
+```go
+type IntSet struct {
+	//something
+}
+
+func (*IntSet) String() string
+
+var _ = IntSet{}.String() // compile error
+
+var s IntSet
+var _ = s.String() // OK
+
+var _ fmt.Stringer = &s // OK
+var _ fmt.Stringer = s //compile error
+```
+由于IntSet本身没有string方法，且依赖自动地转换只能解决变量的问题，而临时的值无法转换，因此，IntSet不是Stringer类型的interface。
+
+一个interface变量只能使用它本身所有的method，即使赋值给它的具体类型还有额外的method，也是无法调用的，例如
+
+```go
+os.Stdout.Write([]byte("hello"))
+os.Stdout.Close()
+
+var w io.Writer
+w = os.Stdout
+w.Write([]byte("hello"))
+w.Close() //compile error: interface only has write method
+```
+
+**空interface**
+inteface {}是一个空的interface，它的作用可以用来匹配任何的类型，例如
+
+```go
+var any interface {}
+any = true
+any = 12.34
+any = "hello"
+any = map[string]int{"one":1}
+any = new(bytes.Buffer)
+```
+为了从空interface中把类型信息取回来，我们需要用到`type assertion`技术，具体到本章后面会详细说明。
+
+可以通过变量的定义，来静态的assert某个type是否是某个interface类型，如下
+
+```go
+var w io.Writer = new(bytes.Buffer)
+
+var _ io.Writer = (*bytes.Buffer)(nil) //简写，io.Writer经常是pointer类型的receiver
+```
+由于GO中是自动地将具体的类型匹配成interface的，因此，对于一些第三方的无法修改源码的库是比较有用的，我们只要定义好interface，第三方的类型会自动地匹配到。
+
+## Parsing Flags with flag.Value
+
+本节主要以例子来说明，先来看传入时间作为命令行参数的例子。
+
+```go
+var period = flag.Duration("period", 1 * time.Second, "sleep period")
+func main() {
+	flag.Parse()
+    fmt.Printf("sleeping for %v....", *period)
+    time.Sleep(*period)
+    fmt.Println()
+}
+```
+上述代码中，period的默认值是1s，如果用户通过`-period 时间`传入值的话，flag.Parse()函数会解析出来，如下
+
+```
+./sleep
+Sleeping for 1s...
+
+./sleep -period 50ms
+Sleeping for 50ms...
+```
+因为Duration类型很重要，因此它们内置到flag package中。我们也可以自定义类型，只需要满足`flag.Value`interface即可，其定义如下
+
+```go
+package flag
+type Value interface {
+	String() string
+    Set(string) error
+}
+```
+通过一个例子来说明如何自定义一个flag value，如下
+
+```go
+type celsiusFlag struct {Celsius}
+
+func (f *celsiusFlag) Set(s string) error {
+	var unit string
+    var value float64
+    fmt.Sscanf(s, "%f%s", &value, &unit)
+    switch unit {
+    	case "C":
+        	f.Celsius = Celsius(value)
+            return nil
+        case "F":
+        	f.Celsius = FToC(Fahrenheit(value))
+            return nil
+    }
+    return fmt.Errorf("invalid temporature %q", s)
+}
+
+func CelsiusFlag(name string, value Celsius, usage string) *Celsius {
+	f := celsiusFlag{value}
+    flag.CommandLine.Var(&f, name, usage)
+    return &f.Celsius
+}
+
+var temp = tempconv.CelsiusFlag("temp", 20.0, "the temperature")
+
+func main() {
+	flag.Parse()
+    fmt.Println(*temp)
+}
+```
+
+用法如下
+
+```go
+./tempflag
+20C
+./tempflag -temp -18C
+-18C
+./tempflag -temp 212F
+100C
+```
+## Interface Values
+
+Interface value包含两个组件，分别是具体地类型和类型的值，它们被称作interface的dynamic type和dynamic value。
+
+以一个简单的例子，来说明interface value，如下
+
+```go
+var w io.Writer
+w = os.Stdout
+w = new(bytes.Buffer)
+w = nil
+```
+对于语句1，创建了type和value都为nil的interface。
+
+对于语句2，创建了type为*os.File，value为Os.Stdout的interface
+
+对于语句3，创建了type为*bytes.Buffer,value为[]byte的interface
+
+![](http://o8m1nd933.bkt.clouddn.com/blog/go/interface_values.png)
+
+interface类型可以存放任意大的dynamic value，例如
+
+```go
+var x interface {} = time.Now() //包含秒，纳秒等信息
+```
+
+**interface比较**
+
+两个interface相等的条件为
+
+- 两个interface都为nil
+- dynamic type和dynamic value都相等
+
+如果interface指向了不能比较的类型，而代码中又强行比较的话，会造成panic，如下
+
+```go
+var x interface{} = []int{1, 2, 3}
+fmt.Println(x==x) //panic: comparing uncomparable type []int
+```
+### An interface Containing a Nil Pointer Is Non-Nil
+
+一个nil的interface和一个interface包含一个pointer为nil情况是不同的，如下
+
+```go
+const debug = true
+
+func main() {
+	var buf *bytes.Buffer
+    if debug {
+    	buf = new(bytes.Buffer)
+    }
+    f(buf)
+    if debug {
+    	//.... use buf
+    }
+}
+
+func f(out io.Writer) {
+	if out != nil {
+    	out.Write([]byte("done!\n"))
+    }
+}
+```
+
+上述程序会panic在out.Write函数，当main调用f时，它会把type信息*byte.Buffer赋值给out的type，nil作为value赋值给out的value，因此，此时out不是nil的interface，于是，out调用write的时候就panic了。
+
+正确的写法是
+
+```go
+var buf io.Writer
+if debug {
+	buf = new (bytes.Buffer)
+}
+f(buf)
+```
+接下来三节将会讨论GO标准库的一些interface，包括sorting、web serving和error handling。
+
+## Sorting with sort.Interface
+
+在GO中，sort.Interface包含以下内容
+
+```go
+package sort
+
+type Interface interface {
+	Len() int
+    Less(i, j int) bool
+    Swap(i, j int)
+}
+```
+为了使用标准库的排序算法，我们需要定义一个类型，实现interface的三种方法，例如
+
+```go
+type StringSlice []string
+
+func(p StringSlice) Len() int { return len(p) }
+func(p StringSlice) Less(i, j int) bool {return p[i] < p[j]}
+func(p StringSlice) Swap(i, j int) {p[i], p[j] = p[j], p[i]}
+
+sort.Sort(StringSlice(names))
+```
+由于排序字符串数组很常见，标准库已经集成了，调用sort.Strings(names)即可。
+
+标准库定义了一个Reverse函数，如下
+
+```go
+package sort
+type reverse struct{ Interface }
+func (r reverse) Less(i, j int) bool {return r.Interface.Less(j, i)}
+
+func Reverse(data Interface) Interface {return reverse{data}}
+```
+这样sort的时候，使用Reverse就能逆序排序了，`sort.Sort(sort.Rerverse(sort.Strings(names)))`。
+
+## The *http.Handler* Interface
+
+在GO中，通过net/http，可以实现web server，具体地我们看其是怎么工作的。
+
+```go
+package http
+
+type Handler interface {
+	ServeHTTP(w ResponseWriter, r *Request)
+}
+
+func ListenAndServe(address string, h Handler) error
+```
+
+ListenAndServe函数的第一个参数是string，一般接受`localhost:8000`之类的参数，第二个参数则是一个Handler interface，需要实现ServeHTTP method。
+
+一个简单的使用例子
+
+```go
+func main() {
+	db := database{"shoes":50， “socks”:5}
+    log.Fatal(http.ListenAndServe("localhost:8000", db))
+}
+
+type dollars float32
+func (d dollars) String() string { return fmt.Sprintf("$%.2f", d)}
+
+type database map[string]dollars
+
+func (db database) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	for iterm, price := range db {
+    	fmt.Fprintf(w, "%s:%s", item, price)
+    }
+}
+```
+
+这个例子对网站的所有路径的访问都会输出相同的东西，如果我们需要通过/price获取价格信息，/list获取列表信息，可以通过以下方法实现
+
+```go
+func (db database) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	switch req.URL.Path {
+    	case "/list":
+        	for item, price := range db {
+            	fmt.FPrintf(w, "%s:%s\n", item, price)
+            }
+        case "/price":
+        	item := req.URL.Query().Get("item")
+            price, ok := db[item]
+            if !ok {
+            	w.WriteHeader(http.StatusNotFound)
+                fmt.Fprintf(w, "no sum item : %q\n", item)
+                return
+            }
+            fmt.Fprintf(w, "%s\n", price)
+        default:
+        	w.WriteHeader(http.StatusNotFound)
+            fmt.Fprintf(w, "no such page: %s\n", req.URL)
+    }
+}
+```
+
+如果需要处理的访问路径越来越多，switch语句的case也会越来越多，为了方便，net/http提供了`ServeMux`，可以把一组http.Handler聚合到单个http.Handler中，如下
+
+```go
+func main() {
+	db := database{"shoes": 50, "socks": 5}
+    mux := http.NewServeMux()
+    mux.Handle("/list", http.HandlerFunc(db.list))
+    mux.Handle("/price", http.HandlerFunc(db.price))
+    log.Fatal(http.ListenAndServe("localhost:8000"), mux)
+}
+
+type database map[string]dollors
+
+func (db database) list(w http.ResponseWriter, req *http.Request) {
+	for item, price := range db {
+    	fmt.Fprintf(w, "%s:%s\n", item, price)
+    }
+}
+
+func (db database) price(w http.ResponseWriter, req *http.Request) {
+	item := req.URL.Query().Get("item")
+    price, ok := db[item]
+    if !ok {
+    	w.WriteHeader(http.StatusNotFound)
+        fmt.Fprintf(w, "no such item: %q\n", item)
+        return
+    }
+    fmt.FPrintf(w, "%s\n", price)
+}
+```
+因为db.list不满足http.Handler interface，因此使用了http.HandlerFunc，如下
+
+```go
+type HandlerFunc func(w ResponseWriter, r *Request)
+
+func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
+	f(w,r)
+}
+```
+可以看出，对于函数类型，也可以有method。由于上述功能经常使用到，标准库提供更简单的写法
+
+```go
+mux.HandleFunc("/list", db.list)
+mux.HandleFunc("/price", db.price)
+```
+
+## The *error* Interface
+
+error interface的定义如下
+
+```go
+type error interface {
+	Error() string
+}
+```
+
+error可以通过errors.New创建，其实现方法如下
+
+```go
+package errors
+
+func New(text string) error { return &errorString{text} }
+type errorString struct { text string }
+func (e *errorString) Error() string { return e.text }
+```
+还可以使用更简便的方法，例如
+
+```go
+package fmt
+
+import "errors"
+func Errorf(format string, args ...interface{}) error {
+	return errors.New(Sprintf(format, args...))
+}
+```
+## Type Assertions
+
+Type Assertions一般是x.(T)，其中x是interface类型，T是类型，称为asserted类型。Type Assertion检查interface的dynamic type是否和类型T匹配。
+
+- 如果asserted类型是具体的类型，并且dynamic type与之匹配了，那么x.(T)的返回值是x的dynamic value，否则，程序panic。
+
+```go
+var w io.Writer
+w = os.Stdout
+f := w.(*OS.File) //success, f == OS.Stdout
+c := w.(*bytes.Buffer) // panic
+```
+- 如果asserted类型本身是interface，那么检查dynamic type是否满足T，如果检查通过，dynamic type和dynamic value保持不变，但是interface类型变为T。这种type assertion的意义是可以改变interface的method组合。
+
+```go
+var w io.Writer
+w = os.Stdout
+rw := w.(io.ReadWriter) // success: *os.File has both Read and Write
+
+w = new(ByteCounter)
+rw = w.(io.ReadWriter) // panic: *ByteCounter has no read method
+```
+type assertion到更少的method组合通常是不必要的，因为可以直接用赋值运算就好，如下
+
+```go
+w = rw
+```
+- 如果type assertion带了两个返回值，那么失败的时候不会panic。
+
+```go
+var w io.Writer = os.Stdout
+f, ok := w.(*os.File) // success: ok, f == os.Stdout
+b, ok := w.(*bytes.Buffer) // failure: !ok, b == nil
+
+if f, ok := w.(*os.File); ok {
+	//use f
+}
+if w, ok := w.(*os.File); ok { //w隐藏了原来的值
+	//use w
+}
+```
+
+## Discriminating Errors with Type Assertions
+
+系统中，I/O可能因为很多原因而失败，但是有三种必须要特殊的处理：file already exist，file not found和permession denied。
+
+系统中提供了三个函数来判断三种错误，如下
+
+```go
+package os
+func IsExist(err error) bool
+func IsNotExist(err error) bool
+func IsPermission(err error) bool
+```
+标准库采用如下方法实现
+
+```go
+package os
+type PathError struct {
+	Op string
+    Path string
+    Err error
+}
+
+func (e *PathError) Error() string {
+	return e.Op + " " + e.Path + ":" + e.Err.Error()
+}
+
+_, err := os.Open("/no/such/file")
+fmt.Println(err) // "Open /no/such/file: No such file or directory"
+fmt.Printf("%#v\n", err) // &os.PathError{Op:"open", Path:"/no/such/file", Err:0x2}
+
+func IsNotExist(err error) bool {
+	if pe, ok := err.(*PathError); ok {
+    	err = pe.Err
+    }
+    return err == syscall.ENOENT || err == ErrNotExist
+}
+```
+
+## Querying Behaviors with Interface Type Assertions
+
+在使用net/http包时，会使用到类似下面的函数
+
+```go
+func writeHeader(w io.Writer, contentType string) error {
+	if _, err := w.Write([]byte("Content-Type:")); err != nil {
+    	return err
+    }
+    if _, err := w.Write([]byte(contentType)); err != nil {
+    	return err
+    }
+}
+```
+因为需要把string类型转成[]byte，会分配临时的内存，造成内存使用量过大。对于有些io.Writer，实际上它们是支持WriteString方法的，因此，WriteHeader可以优化成如下
+
+```go
+func writeString(w io.Writer, s string)(n int, err error) {
+	type stringWriter interface {
+    	WriteString(string)(n int, err error)
+    }
+    if sw, ok := w.(stringWriter); ok {
+    	return sw.WriteString(s) //avoid copy
+    }
+    return w.Write([]byte(s))
+}
+
+func writeHeader(w io.Writer, contentType string) error {
+	if _, err := writeString(w, "Content-Type:"); err != nil {
+    	return err
+    }
+    if _, err := writeString(w, contentType); err != nil {
+    	return err
+    }
+}
+```
+## Type Switches
+
+Interface一般以两种不同的方式在使用。第一种是强调method，例如io.Reader等；第二种是强调type。
+
+考虑下面的代码
+
+```go
+import "database/sql"
+
+func listTracks(db sql.DB, artist string, minYear, maxYear int) {
+	result, err := db.Exec (
+    "SELECT * FROM tracks WHERE artist=? AND ? <= year AND year <=?"), artist, minYear, maxYear)
+}
+```
+
+为了实现讲不同的类型转换成问号中具体的值，我们可以用以下方法
+
+```go
+func sqlQuote(x interface{}) string {
+	if x == nil {
+    	return "NULL"
+    } else if _, ok := x.(int); ok {
+    	return fmt.Sprintf("%d", x)
+    } else if _, ok := x.(uint); ok {
+    	return fmt.Sprintf("%d", x)
+    } else if b, ok := x.(bool); ok {
+    	if b {
+        	return "TRUE"
+        } else {
+        	return "FALSE"
+        }
+    } else if s, ok := x.(string); ok {
+    	return sqlQuoteString(s)
+    } else {
+    	panic(fmt.Sprintf("unexpected type %T: %v", x, x))
+    }
+}
+```
+
+上面采用的方法是type assertion，需要使用大量的if-else语句，不是太方便。
+
+GO中还支持type switch的方法，支持switch语句，比较方便
+
+```go
+func sqlQuote(x interface{}) string {
+	switch x := x.(type) {
+    	case nil:
+        	return "NULL"
+        case int, uint:
+        	return fmt.Sprintf("%d", x)
+        case bool:
+        	if x {
+            	return "TRUE"
+            } else {
+            	return "FALSE"
+            }
+        case string:
+        	return sqlQuoteString(x)
+        default:
+        	panic(fmt.Sprintf("unexpected type %T: %v", x, x))
+    }
+}
+```
+
+
+
+
 
 
 
