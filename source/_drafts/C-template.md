@@ -196,6 +196,286 @@ private:
 
 每个实例化会产生一个独立的class，例如`Blob<string>`跟其他的Blob类型没有任何的关系。
 
+### Member Functions of Class Templates
+
+定义的语法为
+
+```c++
+template <typename T>
+ret-type Blob<T>::member-name(param-list)
+```
+
+一个具体的例子
+
+```c++
+template <typename T>
+void Blob<T>::check(size_type i, const std::string &msg)
+{
+	if (i >= data->size()) {
+    	throw std::out_of_range(msg);
+    }
+}
+```
+
+### Instantition of Class-Template Member Functions
+
+一般地，只有程序使用了Class Template的成员函数，该成员函数才会被实例化。
+
+### Simplifying Use of a Template Class Name inside Class Code
+
+在一个class template内部，我们可以省略掉模板参数，例如
+
+```c++
+template <typename T> class BlobPtr
+public:
+	BlobPtr(): curr(0) {}
+    BlobPtr& operator++()
+    BlobPtr& operator--()
+```
+
+### Using a Class Template outside the Class Template Body
+
+在class template外部使用时，必须要带上模板参数，例如
+
+```c++
+template<typename T>
+BlobPtr<T> BlobPtr<T>::operator++(int)
+{
+	BlobPtr ret = *this
+    ++*this
+    return ret;
+}
+```
+`BlobPtr ret`就相当于`BlobPtr<T> ret`
+
+### Class Templates and Friends
+
+- 一个class template如果有一个非template类型的友元，那么该友元对于class template的所有实例都生效
+- 如果一个class template有template类型的友元，则可以通过控制来决定友元的作用范围
+
+### One-to-One FriendShip
+
+最常见的是友元关系是一个class template和另一个class template以同样模板参数实例化的类互为友元类，例如
+
+```c++
+template <typename T> class BlobPtr;
+template <typename T> class Blob;
+template <typename T>
+	bool operator==(const Blob<T>&, const Blob<T> &);
+template <typename T> class Blob {
+	friend class BlobPtr<T>
+    friend bool operator==<T>
+    	(const Blob<T> &, const Blob<T> &)
+}
+```
+以相同模板类型初始化的Blob和BlobPtr互为友元类，例如
+
+```c++
+Blob<int> ca; // BlobPtr<char> and operator==<char> are friends
+BlobPtr<int> ia; // BlobPtr<int> and operator==<int> are friends
+```
+
+### General and Specific Template FriendShip
+
+通过控制，还能配置更一般地友元关系，如下
+
+```c++
+template <typename T> class Pal;
+class C {
+	friend class Pal<C>; // Pal<C> is a friend to C
+    template <typename T> friend class Pal2; // all instance of Pal2 are friend to C
+}
+
+template <tyname T> class C2 {
+	friend class Pal<T>;
+    template <typename X> friend class Pal2; //all instances of Pal2 are friends of each instance of C2
+    friend class Pal3; // Pal3 is friend of every instance of C2
+}
+```
+
+为了使得所有的实例都是友元，友元的声明必须以不同的模板参数声明。
+
+### Befriending the Template's Own Type Parameter
+
+在C++11标准下，支持以下语法
+
+```c++
+template <typename Type> class Bar {
+friend Type;
+}
+```
+其中Type可以是内置的类型。
+
+### Template Type Aliases
+
+我们可以使用using语法来创建template别名。
+
+```c++
+template <typename T> using twin = pair<T, T>
+twin<string> authors;
+
+template <typename T> using partNo = pair<T, unsigned>;
+partNo<string> books;
+partNo<string> cars;
+partNo<Student> kids;
+```
+
+### static Members of Class Templates
+
+class template可以定义静态类型，每个实例化的类拥有自身的static成员函数，例如
+
+```c++
+template <typename T> class Foo {
+public:
+	static std::size_t count() { return ctr; }
+private:
+	static std::size_t ctr;
+}
+```
+
+## Template Parameters
+
+### Template Parameters and Scope
+
+模板参数使用的名称，在template内部不能再使用。
+
+```c++
+typedef double A;
+template <typename A, typename B> void f(A a, B b)
+{
+	A tmp = a; // has the same type with template arugment A
+    double = B; // error
+}
+```
+
+### Template Declarations
+
+template declaration一定要包含template parameters，例如
+
+```c++
+template <typename T> int compare(const T&, const T &)
+template <typename T> class Blob;
+```
+
+### Using Class Members That are Types
+
+假如T是模板参数，那么当编译器看到以下语句时
+
+```c++
+T::size_type *p;
+```
+
+它需要知道这是定义一个新的指针，还是把size_type和p相乘。默认地，编译器会认为这个不是类型定义，因此，如果是类型定义的话，必须要显式地指明。
+
+```c++
+typename T::size_type *p;
+```
+
+### Default Template Arguments
+
+可以为模板参数指定默认值，例如
+
+```c++
+template<typename T, typename F = less<T>>
+int compare(const T &v1, const T &v2, F f = F())
+{
+	if (f(v1, v2)) return -1;
+    if (f(v2, v1)) return 1;
+    return 0;
+}
+```
+
+### Template Default Arguments and Class Templates
+
+当一个class template的所有模板参数都带默认值时，我们定义类时，需要带一个`<>`，例如
+
+```c++
+template <class T = int> class Numbers {
+public:
+	Numbers(T v = 0) : val(v) {}
+private:
+	T val;
+}
+Numbers<long double> lots_precision;
+Numbers<> average_precision; // empty, T = int
+```
+
+## Member Templates
+
+成员函数本身也可能是模板，分为class template和non class template两种情况讨论。
+
+### Member Templates of Ordinary(Nontemplate) Classes
+
+举个例子，和unique_ptr的默认删除器的实现有关，如下
+
+```c++
+class DebugDelete {
+public:
+	DebugDelete(std::ostream &s = std::cerr) : os(s) {}
+    template <typename T> void operator()(T *p) const 
+    {
+    	os << "deleting unique_str" << std::endl;
+        delete p;
+    }
+private:
+	std::ostream &os;
+}
+```
+
+使用方法如下：
+
+```c++
+double *p = new double;
+DebugDelete d;
+d(p);     // calls DebugDelete::operator()(double *)
+int *ip = new int;
+DebugDelete()(ip); //operator()(int *)
+```
+
+### Member Templates of Class Templates
+
+和class template的普通函数不同，member template是function template，在定义时，还得带上函数本身的模板参数，如下
+
+```c++
+template <typename T> class Blob {
+	template <typename It> Blob(It b, It e);
+}
+
+template <typename T>
+template <typename It>
+Blob<T>::Blob(It b, It e):
+	data(std::make_shared<std::vector<T>(b, e)>) {
+        
+}
+```
+ 
+### Instantiation and Member Templates
+
+对于member template，对于类的模板参数是要指定的，而其本身的模板参数一般是通过函数参数推断出来的。
+
+## Controlling Instantiations
+
+当两个或多个独立的源代码文件使用了相同参数的模板，每个源代码文件中都会有该模板的一份实例化的代码。
+
+在大型项目中，这会造成代码体积变大，编译变慢。在C++11中，可以通过如下方法来避免该问题
+
+```c++
+extern template declaration;
+
+template declaration;
+```
+一般地，可以把模板实例化的代码放到一个单独的文件中，如下
+
+```c++
+template int compare(const int&, const int&);
+template class Blob<string>;
+```
+
+需要注意的是，这种声明会把整个类中的所有函数都实例化。
+
+# Template Argument Deduction
+
+
 
 
 
