@@ -80,7 +80,7 @@ template <typename T> T foo(T* p)
 
 ### Nontype Template Parameters
 
-在function template，我们也可以Nontype Template Parameters，表示我们对某个type parameters使用固定类型的参数。
+在function template，我们也可以用Nontype Template Parameters，表示我们对某个type parameters使用固定类型的参数。
 
 在函数实例化时，nontype template parameters应该使用常量表达式作为参数，从而让编译器在编译期间推导出它的值。
 
@@ -701,7 +701,7 @@ void f(int v1, int &v2)
 f(42, i); //f改变参数i
 flip1(f, j, 42); //flip1并没有改变j
 ```
-flip1推导出T1是int，然后，传递给f的是函数左值参数，因此，并会改变外面传进入的j。
+flip1推导出T1是int，然后，传递给f的是函数左值参数，因此，并不会改变外面传进入的j。
 
 即，如下
 
@@ -738,13 +738,27 @@ void g(int &&i, int &j)
 
 flip2(g, i, 42); //error
 ```
-其中，42推导出T2为int，然后t2是 `int &&`，把`int &&`传递给 `int &&`，类型是`int &&`。
-
-备注：没看出来有什么问题。
+其中，42推导出T2为int，然后t2是 `int &&`，注意，只是类型是`int &&`，但它本身是一个lvalue，所以，不能绑定到g的第一个参数。
 
 ### Using `std::forward` to Preserve Type Information in a Call
 
-TODO.
+可以使用std::forward解决上述问题，`std::forward<T>`的返回值为`T &&`，如下
+
+```c++
+template <typename Type> intermediary(Type &&arg)
+{
+	finalFcn(std::forward<Type>(arg));
+}
+```
+
+- 当传入的参数是是rvalue，Type的类型是rvalue的类型，那么，`forward<Type>`将返回`Type &&`
+- 当出软的参数是lvalue时，那么Type是lvalue reference，即Type &，则`forward<Type>`则是`&&&`堆叠，最后，返回的还是lvalue reference
+
+# References
+
+- C++ primer 5th edition
+
+
 
 
 
