@@ -1,5 +1,5 @@
 ---
-title: 自己动手写分布式KV存储引擎1：设计和实现网络框架
+title: 自己动手写分布式KV存储引擎1  设计和实现网络框架
 date: 2016-09-24 17:55:35
 categories: 分布式
 tags:
@@ -10,7 +10,7 @@ tags:
 
 # 介绍
 
-之前写过一篇博文，描述了本人学习分布式系统的思路([链接](http://oserror.com/distributed/learning-distributed/))。自己动手写分布式KV存储引擎系列文章的目标是记录基于LevelDB(RockDB)构建一个分布式KV存储引擎实现过程，算是对之前学习思路的事件。初步设想，此系列文章会包含以下主题：
+之前写过一篇博文，描述了本人学习分布式系统的思路([链接](http://oserror.com/distributed/learning-distributed/))。自己动手写分布式KV存储引擎系列文章的目标是记录基于LevelDB(RockDB)构建一个分布式KV存储引擎实现过程，算是对之前学习思路的实践。初步设想，此系列文章会包含以下主题：
 
 - 如何设计和实现网络框架
 - 如何设计和实现RPC库
@@ -30,19 +30,19 @@ tags:
 
 # 网络框架的要点
 
-##使用TCP还是UDP?
+## 使用TCP还是UDP?
 
 由于TCP相对于UDP来讲，可靠性高很多，保证包的按序达到，这对于高可靠的存储系统来讲是十分必要的，因此，本文的网络框架将基于TCP来实现。
 
-##操作系统的选择
+## 操作系统的选择
 
 由于目前Linux是服务端编程中主流的操作系统平台，因此，本文的网络框架将基于Linux平台，且为X86_64体系架构。
 
-##Reactor VS Proactor
+## Reactor VS Proactor
 
 一般Reactor模型基于I/O多路复用来实现，Linux平台提供select,epoll等接口，而Proactor模型一般基于异步I/O来实现，目前Linux系统对这块支持不太好，因此，本文的网络框架将基于Reactor来实现。
 
-##线程模型
+## 线程模型
 
 两种常见的线程模型，一是IO线程和工作线程共用相同线程，二是IO线程和工作线程分开。
 
