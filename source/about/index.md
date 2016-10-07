@@ -15,3 +15,6 @@ Charles0429，本科和硕士就读于华中科技大学，目前就职于蚂蚁
 # 其他
 
 - [github](https://github.com/Charles0429)
+- 微信公众号(CharlesTechnique)
+
+![qcode](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
