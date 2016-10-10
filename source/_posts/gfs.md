@@ -458,3 +458,8 @@ chunkserver重启后，会汇报chunk及其version number，master根据version 
 
 1. 如果期间lease没变，那么chunkserver不知道自己拷贝的数据是老的，应该会存在不一致的问题？
 2. 如果期间lease改变，那么chunkserver因为还不能提供读服务，那么version number应该不会递增，继续保持stable状态，然后再发起拷贝。
+
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
+
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)

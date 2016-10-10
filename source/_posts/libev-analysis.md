@@ -504,16 +504,15 @@ backend\_poll和具体的实现有关，以epoll为例，之前讨论过对于�
 
 具体地，即遍历整个pending数组，来调用事件上的处理函数即可。
 
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
+
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+
 # 参考文献
 
 - https://github.com/enki/libev
 - http://www.jianshu.com/p/3299e19d9bf4
 - http://m.blog.csdn.net/article/details?id=49203223
 - Unix环境高级编程
-
-
-
-
-
-
 

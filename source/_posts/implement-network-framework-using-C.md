@@ -277,6 +277,11 @@ Message代表来自Client的一个完整的消息，Server根据消息中的指�
 
 一个简单的使用例子请参照[simple_packet_test.cpp](https://github.com/Charles0429/dstore/blob/master/dstore/test/simple_packet_test.cpp)
 
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
+
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+
 # 参考文献
 
 - [DSTORE源码](https://github.com/Charles0429/dstore)

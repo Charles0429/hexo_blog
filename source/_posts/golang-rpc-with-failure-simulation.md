@@ -579,6 +579,11 @@ func (rs *Server) dispatch(req reqMsg) replyMsg {
 ```
 即反序列化Server端的响应，最终返回结果给应用端。
 
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
+
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+
 # 参考文献
 
 - [MIT 6.824 labrpc](https://pdos.csail.mit.edu/6.824/notes/l-rpc.txt)

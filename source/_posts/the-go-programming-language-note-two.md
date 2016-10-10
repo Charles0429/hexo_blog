@@ -1567,13 +1567,7 @@ func sqlQuote(x interface{}) string {
 }
 ```
 
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-
-
-
-
-
-
-
-
-
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)

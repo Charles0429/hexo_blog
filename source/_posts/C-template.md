@@ -1,5 +1,6 @@
 ---
 title: C++ template基础
+date: 2016-08-07 22:27:27
 category: 语言
 tags:
   - C++
@@ -753,6 +754,11 @@ template <typename Type> intermediary(Type &&arg)
 
 - 当传入的参数是是rvalue，Type的类型是rvalue的类型，那么，`forward<Type>`将返回`Type &&`
 - 当出软的参数是lvalue时，那么Type是lvalue reference，即Type &，则`forward<Type>`则是`&&&`堆叠，最后，返回的还是lvalue reference
+
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
+
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
 
 # References
 

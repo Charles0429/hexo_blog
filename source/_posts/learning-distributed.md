@@ -106,6 +106,11 @@ Distributed Snapshots: Determining Global States of a Distributed System
 
 最后，本文只是一个思路，很多东西还没有细化，需要不断完善。
 
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
+
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+
 ## 参考文献
 
 *   http://duanple.blog.163.com/blog/static/709717672011330101333271/

@@ -253,3 +253,8 @@ master通过ping-pong消息来拉取worker的count信息，当MapReduce操作完
 有些counter是MapReduce libaray内部自动维护的，例如，输入的K/V对数量，输出的K/V对数量等。
 
 Counter机制在有些情况很有用，比如用户希望输入和输出的K/V数量是完全相同的，就可以通过Counter机制来检查。
+
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
+
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)

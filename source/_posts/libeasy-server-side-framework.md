@@ -798,6 +798,11 @@ int easy_connection_write_socket(easy_connection_t *c)
 
 当fd可写时，libeasy会调用`easy_connection_on_writable`来处理，而它又会调用`easy_connection_write_socket`来处理。在上面一节已经分析过其处理逻辑了，这里不再讨论了。
 
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
+
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+
 # 参考文献
 
 - [OceanBase使用libeasy原理源码分析：服务器端](http://www.cnblogs.com/foxmailed/archive/2013/02/17/2908180.html)

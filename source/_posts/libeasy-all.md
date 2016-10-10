@@ -16,4 +16,7 @@ libeasy是一个高性能网络编程框架，Oceanbase等阿里的服务端程�
 - [libeasy基础数据结构](http://oserror.com/backend/libeasy-data-structure/)
 - [libeasy服务端框架实现原理](http://oserror.com/backend/libeasy-server-side-framework/)
 
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)

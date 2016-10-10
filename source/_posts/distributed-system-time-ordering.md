@@ -129,6 +129,11 @@ total order的事件关系=>定义如下：
 for any events a,b in S : if a==>b then C(a) < C(b)
 ```
 
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
+
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+
 # References
 
 - Time, Clocks, and the Ordering of Events in a Distributed System
