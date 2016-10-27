@@ -1,5 +1,6 @@
 ---
 title: raft原理（三）：日志合并和客户端交互
+category: 分布式
 tags:
   - 分布式
   - Raft
