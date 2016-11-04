@@ -374,4 +374,13 @@ func (rf *Raft) AppendEntries(args AppendEntriesArgs, reply *AppendEntriesReply)
 
 如果follower的term大于leader的term，则返回拒绝的RPC，否则，返回成功的RPC。
 
+本文中所有的代码都在[Raft](https://github.com/Charles0429/toys/blob/master/6.824/src/raft/raft.go)。
 
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
+
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+
+# 参考文献
+
+- [In Search of an Understandable Consensus Algorithm(Extended Version)](https://pdos.csail.mit.edu/6.824/papers/raft-extended.pdf)
