@@ -75,8 +75,9 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: git@github.com:Charles0429/Charles0429.github.io.git
-  branch: master
+  repo:
+    github: git@github.com:Charles0429/Charles0429.github.io.git, master
+    coding: git@git.coding.net:Charles0515/Charles0515.git, coding-pages
 
 duoshuo_shortname: oserror
 baidu_analytics: e46cc2553dc9a888558de28aec7a1dc4
