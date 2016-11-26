@@ -14,6 +14,8 @@ Paxos算法由lamport大师提出，目标是解决分布式环境下数据一�
 - Paxos算法要解决的问题是什么？
 - Basic Paxos在整个Paxos算法中的地位及其原理
 
+本文收录在我的github中[papers项目](https://github.com/Charles0429/papers)，papers项目旨在学习和总结分布式系统相关的论文。
+
 # Paxos算法要解决的问题
 
 首先，来描述一下Paxos要解决的问题，分布式环境下数据一致性问题。
