@@ -80,7 +80,7 @@ deploy:
     github: git@github.com:Charles0429/Charles0429.github.io.git
     coding: git@git.coding.net:Charles0515/Charles0515.git
 
-duoshuo_shortname: oserror
+disqus_shortname: oserror-blog
 baidu_analytics: e46cc2553dc9a888558de28aec7a1dc4
 feed:
   type: atom
