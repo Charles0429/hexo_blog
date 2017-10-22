@@ -68,7 +68,7 @@ ANSI SQL的隔离级别主要是从解决应用程序出现的各种干扰现象
 
 整个事务个隔离级别，与杜绝的现象的对应关系如下图：
 
-![ANSI SQL Isolation Levels](http://img.oserror.com/blog/isolation/ansi_sql_isolation_levels.png)
+![ANSI SQL Isolation Levels](http://o8m1nd933.bkt.clouddn.com/blog/isolation/ansi_sql_isolation_levels.png)
 
 值得一提的是，在Serializable下，不可能发生P1，P2和P3，但并不表明，不发生P1，P2和P3就一定是在Serializable。真正的在Serializable是指事务并发执行下得到的结果，与各个事务串行执行下的某个结果相同。
 

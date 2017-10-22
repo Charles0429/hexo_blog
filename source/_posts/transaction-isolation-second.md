@@ -39,7 +39,7 @@ ANSI SQL标准下的事务隔离级别是基于禁止某些干扰现象而制定
 
 整个事务个隔离级别，与杜绝的现象的对应关系如下图：
 
-![ANSI SQL Isolation Levels](http://img.oserror.com/blog/isolation/ansi_sql_isolation_levels.png)
+![ANSI SQL Isolation Levels](http://o8m1nd933.bkt.clouddn.com/blog/isolation/ansi_sql_isolation_levels.png)
 
 由于ANSI SQL的标准存在以下限制：
 
@@ -118,7 +118,7 @@ two-phase read(write)是当有一个或多个read(write) lock被释放后，不�
 如果需要禁止P3，即要禁止读到某个谓词条件后，满足该谓词条件的数据还被其他事务修改，因此，需要对谓词条件加读锁，且是long duration的，此时，隔离级别满足SERIALIZABLE。
 
 不同的加锁与事务隔离级别的对应关系如下：
-![Lock Isolation Levels](http://img.oserror.com/blog/isolation/lock_isolation_levels.png)
+![Lock Isolation Levels](http://o8m1nd933.bkt.clouddn.com/blog/isolation/lock_isolation_levels.png)
 
 表格中最后一项中，对于读写锁都是long duration的，即到事务结束才会释放锁，即事务过程中只有加锁阶段，没有解锁阶段，这种方式和普通的two-phase locking有什么区别呢？
 
