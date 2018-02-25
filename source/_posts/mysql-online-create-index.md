@@ -66,6 +66,11 @@ MySQL的等事务结束是通过MDL(Meta Data Lock)实现的，MDL会按序唤�
 
 MySQL online create index的整体思路分为两步构建基线以及更新增量，构建基线时采用的归并算法比较简单，资源占用少，但性能会比较差；在更新增量时，采用将增量切分成更小的块，来减少停写的时间，是比较通用的方法。
 
+PS:
+本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
+
+![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+
 # 参考文献
 
 - [MySQL 5.7.21 source code](https://github.com/mysql/mysql-server/releases/tag/mysql-5.7.21)
