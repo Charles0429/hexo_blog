@@ -1,8 +1,9 @@
 ---
 title: 分布式系统中常见技术解决的问题是什么?
 date: 2018-03-21 08:09:08
-categories:
+categories: 分布式
 tags:
+  - 分布式
 ---
 
 # 引言
