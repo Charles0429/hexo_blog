@@ -45,7 +45,7 @@ recv(fd, data);
 
 阻塞的connect函数调用如下，其TCP状态转换如下图：
 
-![tcp block connect](http://o8m1nd933.bkt.clouddn.com/blog/dstore/tcp_blocking_connect.png)
+![tcp block connect](http://oserror.com/images/tcp_blocking_connect.png)
 
 如上图所示，整个流程如下：
 
@@ -59,7 +59,7 @@ recv(fd, data);
 
 非阻塞的connect的调用如下，其TCP状态转换如下图：
 
-![tcp nonblocking accept](http://o8m1nd933.bkt.clouddn.com/blog/dstore/tcp_nonblocking_connect.png)
+![tcp nonblocking accept](http://oserror.com/images/tcp_nonblocking_connect.png)
 
 如上图所示，整个流程如下：
 
@@ -98,7 +98,7 @@ write的实现与server端的不同，需要根据不同情况来做不同的处
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

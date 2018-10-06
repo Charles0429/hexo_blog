@@ -117,7 +117,7 @@ Google的环境如下
 
 Map会自动地把输入数据划分成M份，这些数据划分可以并行地被不同机器处理。Reduce按照划分函数划分数据，例如hash(key) mod R，其中R是由用户指定的。下图描述了MapReduce的整个流程，如下
 
-![](http://o8m1nd933.bkt.clouddn.com/blog/mapreduce/mapreduce_overview.png)
+![](http://oserror.com/images/mapreduce_overview.png)
 
 1. MapReduce library会把输入文件划分成多个16到64MB大小的分片（大小可以通过参数调节），然后在一组机器上启动程序。
 2. 其中比较特殊的程序是master，剩下的由master分配任务的程序叫worker。总共有M个map任务和R个reduce任务需要分配，master会选取空闲的worker，然后分配一个map任务或者reduce任务。
@@ -257,4 +257,4 @@ Counter机制在有些情况很有用，比如用户希望输入和输出的K/V�
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)

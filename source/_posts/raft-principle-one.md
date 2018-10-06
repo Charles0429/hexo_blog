@@ -37,7 +37,7 @@ raft算法的主要特性为
 
 # Replicated State Machine
 
-![replicate_state_machine](http://o8m1nd933.bkt.clouddn.com/blog/raft/replicate_state_machine.png)
+![replicate_state_machine](http://oserror.com/images/replicate_state_machine.png)
 
 Repicated State Machine一般分为三个部分：
 
@@ -87,11 +87,11 @@ Raft通过选出一个leader来简化日志副本的管理，例如，日志项(
 
 Raft可能的状态变化如下图：
 
-![raft_server_states](http://o8m1nd933.bkt.clouddn.com/blog/raft/raft_server_states.png)
+![raft_server_states](http://oserror.com/images/raft_server_states.png)
 
 Raft将时间分为多个term，term以连续的整数来标识，每个term以一次election开始，如果有server被选为leader，则该term的剩余时间该server都是leader。
 
-![raft_terms](http://o8m1nd933.bkt.clouddn.com/blog/raft/raft_terms.png)
+![raft_terms](http://oserror.com/images/raft_terms.png)
 
 有些term里，可能并没有选出leader，这时候会开启一个新term来继续选主，如上图中的t3。
 
@@ -143,7 +143,7 @@ Raft采用随机定时器的方法来避免上述情况，每个candidate选择�
 
 当follower宕机或者运行较慢时，leader会无限地重发`AppendEntries`给这些follower，直到所有的follower都复制了该log entry。
 
-![raft_log_replication](http://o8m1nd933.bkt.clouddn.com/blog/raft/raft_log_replication.png)
+![raft_log_replication](http://oserror.com/images/raft_log_replication.png)
 
 log按照上图方式组织，每个log entry存储了指令和term信息，由leader指定。每个log entry有个数字索引(index)来表名其在log中的位置。
 
@@ -171,7 +171,7 @@ raft的log replication保证以下性质(Log Matching Property)：
 
 在正常情况下，leader和follower会保持一致，一致性检查通常都会成功。但是，当leader崩溃后，可能会出现日志不一致的情况，通过一个例子来说明。
 
-![raft_leader_follower_not_consistent](http://o8m1nd933.bkt.clouddn.com/blog/raft/raft_leader_follower_not_consistent.png)
+![raft_leader_follower_not_consistent](http://oserror.com/images/raft_leader_follower_not_consistent.png)
 
 如上图所示，raft的leader强制以自己的日志来复制不一致的日志，通过以下方法：
 
@@ -193,7 +193,7 @@ raft的log replication保证以下性质(Log Matching Property)：
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

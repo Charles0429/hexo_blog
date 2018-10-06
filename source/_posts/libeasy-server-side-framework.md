@@ -28,7 +28,7 @@ libeasy网络模型基于libev的reactor模型，具体分析请参看文章([li
 libeasy支持两种常见的线程模型，一是IO线程和工作线程共用相同线程，二是IO线程和工作线程分开。
 
 ### I/O线程和工作线程共用
-![libeasy thread model 1](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/libeasy_thread_model_1.png)
+![libeasy thread model 1](http://oserror.com/images/libeasy_thread_model_1.png)
 
 如上图，I/O线程和工作线程共用的线程模型中，实际上是没有专门的工作线程的，I/O线程不仅需要负责处理I/O，还需要真正地处理请求，计算结果。一般典型的处理流程为
 
@@ -43,7 +43,7 @@ libeasy支持两种常见的线程模型，一是IO线程和工作线程共用�
 
 ### I/O线程和工作线程独立
 
-![libeasy thread model 2](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/libeasy_thread_model_2.png)
+![libeasy thread model 2](http://oserror.com/images/libeasy_thread_model_2.png)
 
 如上图，在I/O线程和工作线程独立的线程模型中，有专门的工作线程来处理请求，计算结果，I/O线程仅仅需要做读写数据相关的操作。在这种线程模型下，整个流程为
 
@@ -58,7 +58,7 @@ libeasy支持两种常见的线程模型，一是IO线程和工作线程共用�
 
 ## libeasy资源管理
 
-![ibeasy resource management](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/libeasy_resource_management.png)
+![ibeasy resource management](http://oserror.com/images/libeasy_resource_management.png)
 
 libeasy的资源管理方式如上图所示，主要包括
 
@@ -801,7 +801,7 @@ int easy_connection_write_socket(easy_connection_t *c)
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

@@ -43,7 +43,7 @@ RAID的一般有如下作用
 
 RAID0设计的目标是为了提升读写性能，但并不带数据冗余信息。
 
-![RAID0](http://o8m1nd933.bkt.clouddn.com/blog/raid/raid0.png)
+![RAID0](http://oserror.com/images/raid0.png)
 
 如上图，RAID0会把数据切成块，分别存储在N个磁盘上。当读数据时，如果要读的数据块比较大，分布在多次磁盘上，那么能同时从多块盘读数据；当写数据时，如果要写的数据块比较大，分布式在多块磁盘上，那么同时能从多块盘写数据。
 
@@ -58,7 +58,7 @@ RAID0设计的目标是为了提升读写性能，但并不带数据冗余信息
 
 RAID1的设计目标是为每份数据都提供一份或多份冗余数据，其结构如下：
 
-![RAID1](http://o8m1nd933.bkt.clouddn.com/blog/raid/raid1.png)
+![RAID1](http://oserror.com/images/raid1.png)
 
 如上图，RAID1中一个磁盘都有一个或多个冗余的镜像盘，所有磁盘的数据是一模一样的。RAID1读数据时，可以利用所有数据盘的带宽；写数据时，要同时写入数据盘和镜像盘，因此，需要等待最慢的磁盘写完成，写操作才完成，因此，写性能跟最慢的磁盘相当。N块盘的RAID1的特性如下：
 
@@ -71,7 +71,7 @@ RAID1的设计目标是为每份数据都提供一份或多份冗余数据，其
 
 RAID2的设计目标是在RAID0级别的基础上，加了海明纠错码。
 
-![RAID2](http://o8m1nd933.bkt.clouddn.com/blog/raid/raid2.png)
+![RAID2](http://oserror.com/images/raid2.png)
 
 如上图，前面四个盘是数据盘，后面三个盘是纠错码。RAID2读数据时，能同时使用多个数据盘的带宽；RAID2写数据时，除了写数据盘，还需要写校验盘，写性能会有下降。因此，N块盘的RAID2的特性如下：
 
@@ -84,7 +84,7 @@ RAID2的设计目标是在RAID0级别的基础上，加了海明纠错码。
 
 RAID3是把数据按照字节分别存在不同的磁盘中，并且最后一个磁盘提供纠错冗余，其结构如下：
 
-![RAID3](http://o8m1nd933.bkt.clouddn.com/blog/raid/raid3.png)
+![RAID3](http://oserror.com/images/raid3.png)
 
 如上图，由于按照字节切分数据，读数据时，一定会同时从多个盘读数据，可以利用所有数据盘的带宽；写数据时，也会利用所有磁盘的带宽，但所有的写校验数据都会在一个盘，因此，写性能主要受限于校验盘。N快盘的RAID3的特性如下：
 
@@ -97,7 +97,7 @@ RAID3是把数据按照字节分别存在不同的磁盘中，并且最后一个
 
 RAID4是把数据按照分块分别存在不同的磁盘中，并且最后一个磁盘提供纠错冗余，其结构如下：
 
-![RAID4](http://o8m1nd933.bkt.clouddn.com/blog/raid/raid4.png)
+![RAID4](http://oserror.com/images/raid4.png)
 
 如上图，读数据时，当数据分布在多块盘时，能够利用多块数据盘的带宽；写数据时，如果数据分布在多快盘时，能利用所有磁盘带宽，但写校验数据只能在一块盘上，因此，写性能主要受限于校验盘。N块盘的RAID4的特性如下：
 
@@ -110,7 +110,7 @@ RAID4是把数据按照分块分别存在不同的磁盘中，并且最后一个
 
 RAID5是把数据块按照分块分别存在不同的磁盘中，并且冗余信息也会分块分布在多块磁盘中，其结构如下：
 
-![RAID5](http://o8m1nd933.bkt.clouddn.com/blog/raid/raid5.png)
+![RAID5](http://oserror.com/images/raid5.png)
 
 如上图，读数据时，当数据分布在多块盘时，能够利用多块数据盘的带宽；写数据时，如果数据分布在多块盘时，能利用所有数据盘带宽，同时写校验数据也分散在多块盘上，但因为要额外写入校验数据，因此，写数据的性能略微有所下降。N块盘的RAID5的特性如下：
 
@@ -123,7 +123,7 @@ RAID5是把数据块按照分块分别存在不同的磁盘中，并且冗余信
 
 RAID6是把数据块按照分块分别存在不同的磁盘中，并且冗余信息为两份奇偶校验码，分布在多块磁盘中，其结构如下：
 
-![RAID6](http://o8m1nd933.bkt.clouddn.com/blog/raid/raid6.png)
+![RAID6](http://oserror.com/images/raid6.png)
 
 如上图，读数据时，当数据分布在多块盘时，能够利用多块数据盘的带宽；写数据时，如果数据分布在多块盘时，能利用多块数据盘带宽，同时写校验数据也分散在多块盘中，但因为要额外写入两份校验数据，因此，写数据的性能要略微下降。N块盘的RAID6的特性如下：
 
@@ -149,7 +149,7 @@ RAID6是把数据块按照分块分别存在不同的磁盘中，并且冗余信
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

@@ -74,7 +74,7 @@ BloomFilter中插入一个元素，会使用k个hash函数，来计算出k个在
 
 以一个例子，来说明添加的过程，这里，假设m=19，k=2，如下：
 
-![bloomfilter insert](http://o8m1nd933.bkt.clouddn.com/blog/bloomfilter/bloom_filter_insert.png)
+![bloomfilter insert](http://oserror.com/images/bloom_filter_insert.png)
 
 如上图，插入了两个元素，X和Y，X的两次hash取模后的值分别为4,9，因此，4和9位被置成1；Y的两次hash取模后的值分别为14和19，因此，14和19位被置成1。
 
@@ -86,7 +86,7 @@ BloomFilter中查找一个元素，会使用和插入过程中相同的k个hash�
 
 最后，BloomFilter中不允许有删除操作，因为删除后，可能会造成原来存在的元素返回不存在，这个是不允许的，还是以一个例子说明：
 
-![bloomfilter delete](http://o8m1nd933.bkt.clouddn.com/blog/bloomfilter/bloom_filter_delete.png)
+![bloomfilter delete](http://oserror.com/images/bloom_filter_delete.png)
 
 上图中，刚开始时，有元素X，Y和Z，其hash的bit如图中所示，当删除X后，会把bit 4和9置成0，这同时会造成查询Z时，报不存在的问题，这对于BloomFilter来讲是不能容忍的，因为它要么返回绝对不存在，要么返回可能存在。
 
@@ -226,7 +226,7 @@ key_nums_=100000 expected false positive rate=0.1 real false positive rate=0.132
 
 前面实现的版本中，多次调用了hash_func函数，这对于计算比较长的字符串的hash的开销是比较大的，为了模拟这种场景，插入1000w行的数据，使用perf top来抓取其性能数据，结果如下：
 
-![bloomfilter hash opt before](http://o8m1nd933.bkt.clouddn.com/blog/bloomfilter/bloom_filter_hash_opt_before.png)
+![bloomfilter hash opt before](http://oserror.com/images/bloom_filter_hash_opt_before.png)
 
 如上图，除了生成数据的函数外，占用CPU最高的就属于hash_func了，占用了13%的CPU。
 
@@ -252,7 +252,7 @@ void BloomFilter<T>::insert2(const T &key)
 
 经过优化后，性能数据图如下：
 
-![bloomfilter hash opt after](http://o8m1nd933.bkt.clouddn.com/blog/bloomfilter/bloom_filter_hash_opt_after.png)
+![bloomfilter hash opt after](http://oserror.com/images/bloom_filter_hash_opt_after.png)
 
 和之前性能图对比发现，hash_func的CPU使用率已经减少到4%了。
 
@@ -297,7 +297,7 @@ sudo perf report -g graph
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

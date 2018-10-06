@@ -32,7 +32,7 @@ Raft的日志会随着处理客户端请求数量的增多而不断增大，在�
 
 因此，需要定期地清理日志，Raft采用最简单的快照方法。对系统当前做快照时，会把当前状态持久化到存储中，然后到快照点的日志项都可以被删除。
 
-![raft log compaction](http://o8m1nd933.bkt.clouddn.com/blog/raft/raft_log_compaction.png)
+![raft log compaction](http://oserror.com/images/raft_log_compaction.png)
 
 Raft算法中每个server单独地做快照，即把当前状态机的状态写入到存储中（状态机中的状态都是已提交的log entry回放出来的）。除了状态机的状态外，Raft快照中还需要一些元数据信息，包括如下：
 
@@ -85,7 +85,7 @@ Raft的性能测试配置如下：
 - 5 servers
 - 图中的时间范围是electionTimeout的随机范围
 
-![performance](http://o8m1nd933.bkt.clouddn.com/blog/raft/raft_performance.png)
+![performance](http://oserror.com/images/raft_performance.png)
 
 从上图的第一幅图，可以看出：
 
@@ -100,7 +100,7 @@ Raft的性能测试配置如下：
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

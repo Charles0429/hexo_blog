@@ -38,7 +38,7 @@ google对现有系统的运行状态以及应用系统进行总结，抽象出�
 
 GFS的整体架构如下图：
 
-![gfs architecture](http://o8m1nd933.bkt.clouddn.com/blog/gfs/gfs_architecture.png)
+![gfs architecture](http://oserror.com/images/gfs_architecture.png)
 
 (图片来源：gfs论文)
 
@@ -134,7 +134,7 @@ Lease的过期时间默认是60s，可以通过心跳信息来续时间，如果
 
 ### 4.1.1 Write Control and Data Flow
 
-![GFS Write Control and Data Flow](http://o8m1nd933.bkt.clouddn.com/blog/gfs/gfs_write_control.png)
+![GFS Write Control and Data Flow](http://oserror.com/images/gfs_write_control.png)
 
 (图片来源：gfs论文)
 
@@ -186,7 +186,7 @@ Snapshot的整个流程如下：
 
 ## 4.5 Consistency Model
 
-![Consistency Model](http://o8m1nd933.bkt.clouddn.com/blog/gfs/consistency_model.png)
+![Consistency Model](http://oserror.com/images/consistency_model.png)
 
 (图片来源：gfs论文)
 
@@ -462,4 +462,4 @@ chunkserver重启后，会汇报chunk及其version number，master根据version 
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)

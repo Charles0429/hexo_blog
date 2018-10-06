@@ -47,7 +47,7 @@ tags:
 两种常见的线程模型，一是IO线程和工作线程共用相同线程，二是IO线程和工作线程分开。
 
 ### I/O线程和工作线程共用
-![thread model 1](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/libeasy_thread_model_1.png)
+![thread model 1](http://oserror.com/images/libeasy_thread_model_1.png)
 
 如上图，I/O线程和工作线程共用的线程模型中，实际上是没有专门的工作线程的，I/O线程不仅需要负责处理I/O，还需要真正地处理请求，计算结果。一般典型的处理流程为
 
@@ -62,7 +62,7 @@ tags:
 
 ### I/O线程和工作线程独立
 
-![thread model 2](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/libeasy_thread_model_2.png)
+![thread model 2](http://oserror.com/images/libeasy_thread_model_2.png)
 
 如上图，在I/O线程和工作线程独立的线程模型中，有专门的工作线程来处理请求，计算结果，I/O线程仅仅需要做读写数据相关的操作。在这种线程模型下，整个流程为
 
@@ -106,7 +106,7 @@ tags:
 
 ### 网络请求处理流程
 
-![handle request](http://o8m1nd933.bkt.clouddn.com/blog/net_frame/network_packet_process.png)
+![handle request](http://oserror.com/images/network_packet_process.png)
 
 从上面的处理流程可以看出，对于Client和Server，它们需要关注的事情包括
 
@@ -123,7 +123,7 @@ tags:
 
 ### 网络连接处理流程
 
-![network connection flow](http://o8m1nd933.bkt.clouddn.com/blog/net_frame/network_connect.png)
+![network connection flow](http://oserror.com/images/network_connect.png)
 
 网络连接处理流程和网络处理请求流程不太一样，在于Client和Server的处理与网络请求处理的流程不太一致，其流程如下
 
@@ -149,7 +149,7 @@ tags:
 
 ### 网络连接关闭流程
 
-![network close](http://o8m1nd933.bkt.clouddn.com/blog/net_frame/network_close.png)
+![network close](http://oserror.com/images/network_close.png)
 
 如上图，对于Client端，需要处理的主要是调用网络框架的close API；对于Server端，则需要处理其上维护的连接结构体等等。
 
@@ -188,7 +188,7 @@ tags:
 
 其他的一律由网络框架部分来处理，网络框架的整体框架如下
 
-![network framework architecture](http://o8m1nd933.bkt.clouddn.com/blog/net_frame/network_framework_architecture.png)
+![network framework architecture](http://oserror.com/images/network_framework_architecture.png)
 
 网框框架整体包含两部分：
 
@@ -199,7 +199,7 @@ tags:
 
 一个reactor模式如下图：
 
-![reactor](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/reactor_model.png)
+![reactor](http://oserror.com/images/reactor_model.png)
 
 Reactor中组件包括Reactor，EventHandler，I/O multiplexing和Timer
 
@@ -225,7 +225,7 @@ Connection Management主要需要处理如下
 
 ### Reactor实现
 
-![Reactor](http://o8m1nd933.bkt.clouddn.com/blog/net_frame/reactor_implementation.png)
+![Reactor](http://oserror.com/images/reactor_implementation.png)
 
 - EventLoop：对应于Reactor，调用epoll或select的接口
 - Event：每个文件描述符对应一个事件，read_cb处理读事件,write_cb处理写事件
@@ -238,7 +238,7 @@ Connection Management主要需要处理如下
 
 ### Connection Management实现
 
-![connection management](http://o8m1nd933.bkt.clouddn.com/blog/net_frame/connection_management_implementation.png)
+![connection management](http://oserror.com/images/connection_management_implementation.png)
 
 #### TCPServer
 
@@ -280,7 +280,7 @@ Message代表来自Client的一个完整的消息，Server根据消息中的指�
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

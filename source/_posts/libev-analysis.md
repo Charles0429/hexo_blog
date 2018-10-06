@@ -31,31 +31,31 @@ reactor模式底层使用了I/O多路复用模型，是单个线程中管理多�
 
 对于阻塞I/O，应用调用I/O操作后，会一直等待阻塞，等待数据准备好。此时进程无法做其他的任何事情，只能傻傻等着recvfrom返回。
 
-![blocking io](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/io_model_blocking.png)
+![blocking io](http://oserror.com/images/io_model_blocking.png)
 
 **非阻塞I/O**
 
 非阻塞I/O与阻塞I/O的区别是，非阻塞I/O在等待数据的时候，进程不是阻塞的，它可以先做其他的事情，然后定期的来询问数据是否准备好。
 
-![non-blocking io](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/io_model_nonblocking.png)
+![non-blocking io](http://oserror.com/images/io_model_nonblocking.png)
 
 **I/O多路复用**
 
 I/O多路复用的流程是先使用select/epoll之类的接口等待I/O事件就绪，待select/epoll返回后，数据已经准备好了，这时候，一般再调用recvfrom来读取数据。相对于阻塞式I/O，这里涉及到了select/epoll以及recvfrom两次系统调用，看起来效率应该比阻塞式I/O还要低。对于只有单个fd活跃的进程来讲确实是效率会更低，但是select/epoll可以同时等待多个fd，对于活跃fd比较多的进程，使用I/O多路复用是较好的选择。
 
-![io multiplexing](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/io_model_multiplexing.png)
+![io multiplexing](http://oserror.com/images/io_model_multiplexing.png)
 
 **信号驱动I/O**
 
 信号驱动I/O的流程是建立一个SIGIO信号处理程序，当数据准备好后，再调用recvfrom函数来处理，期间，进程可以完全来处理自己的事情，不必像阻塞式I/O那样阻塞，也不必像非阻塞I/O那样轮询。
 
-![signal io](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/io_model_signal.png)
+![signal io](http://oserror.com/images/io_model_signal.png)
 
 **异步I/O**
 
 异步I/O的流程是在调用aio_read之后直到数据拷贝完成都不需要进程等待。对于前面四种I/O模型，拷贝数据的过程进程是必须要自己处理的，而对于异步I/O来讲，这个步骤也不需要自己处理。
 
-![async io](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/io_model_async.png)
+![async io](http://oserror.com/images/io_model_async.png)
 
 对于目前主流的reactor网络模型中，采用的是I/O多路复用模型，其优点是能同时处理等待多个fd的数据准备过程，非常适合互联网领域服务端需要处理大规模网络链接的情况。
 
@@ -63,7 +63,7 @@ I/O多路复用的流程是先使用select/epoll之类的接口等待I/O事件�
 
 一个reactor模式如下图：
 
-![reactor](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/reactor_model.png)
+![reactor](http://oserror.com/images/reactor_model.png)
 
 reactor中组件包括reactor，EventHandler，I/O multiplexing和Timer
 
@@ -96,7 +96,7 @@ ev_async
 ```
 libev使用宏定义实现了类似C++继承的组织结构，具体如下图：
 
-![libev event handle](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/libev_event_handle.png)
+![libev event handle](http://oserror.com/images/libev_event_handle.png)
 
 如上图，只列举了libev比较常见的ev\_io,ev\_timer和ev\_signal。EV_WATCHER相当于Reactor模式中的EventHandler基类，而ev\_io，ev\_timer和ev\_signal属于EventHandler的子类，实现各自的事件。
 
@@ -121,7 +121,7 @@ ev\_io还提供了初始化等功能，例如，`ev_io_init`函数初始化fd，
 
 libev支持多种I/O multiplexing的接口，例如select，epoll，kequeue。为了方便统一管理，libev提供一套标准接口，对应的I/O multiplexing需要实现这套标准接口，以供上层调用，虽然libev不是以OO方式实现的，这里还是以UML图的方式描述，方便讨论。
 
-![libev IO multiplexing](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/libev_io_multiplexing.png)
+![libev IO multiplexing](http://oserror.com/images/libev_io_multiplexing.png)
 
 libev本身是通过函数指针方式实现的，即在reactor模块，使用了backend_modify和backend_poll来个函数指针，具体指向的I/O multiplexing接口跟实现有关，在linux下可能是select实现的接口，也可能是epoll实现的接口。
 
@@ -415,7 +415,7 @@ libev给ev\_io事件提供的接口包括
 
 **ev\_io\_start处理流程**
 
-![libev ev_io_start](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/libev_ev_io_start.png)
+![libev ev_io_start](http://oserror.com/images/libev_ev_io_start.png)
 
 1. 对于已经是active的watcher则直接返回，表明已经添加过
 2. 如果是非active的，则首先置成active
@@ -452,7 +452,7 @@ libev给ev\_timer提供的接口包括
 
 libev的HandleEvents接口为ev\_run函数，其流程为
 
-![libev ev_run](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/libev_ev_event_loop.png)
+![libev ev_run](http://oserror.com/images/libev_ev_event_loop.png)
 
 fd\_reify的操作为遍历fdchanges数组，然后根据fd从anfds中拿具体数据，最后调用epoll\_modify函数注册事件。
 
@@ -507,7 +507,7 @@ backend\_poll和具体的实现有关，以epoll为例，之前讨论过对于�
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

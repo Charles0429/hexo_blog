@@ -125,13 +125,13 @@ tags:
 
 ### 向下调整
 
-![向下调整](http://o8m1nd933.bkt.clouddn.com/blog/dstore/heap_down_adjust.png)
+![向下调整](http://oserror.com/images/heap_down_adjust.png)
 
 如上图所示，从节点值为8的节点开始调整，首先，找出8的子节点中，较小者，即3。然后，如果较小的子节点(3)，小于父节点(8)，那么，则将父子节点交换。最后，再从交换后的节点开始，直到到达叶子节点或者父节点比两个子节点都大。
 
 ### 向上调整
 
-![向上调整](http://o8m1nd933.bkt.clouddn.com/blog/dstore/heap_up_adjust.png)
+![向上调整](http://oserror.com/images/heap_up_adjust.png)
 
 如上图所示，从节点0开始调整，如果其父节点大于它，则互相交换，即途中的交换0和3；继续在交换后的位置开始，节点0和父节点1比较，父节点1大于子节点0，因此，继续交换，最终，得到调整后的堆。
 
@@ -291,7 +291,7 @@ down_heap(array, 0, array.size()-1);
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

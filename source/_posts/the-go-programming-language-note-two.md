@@ -1155,7 +1155,7 @@ w = nil
 
 对于语句3，创建了type为*bytes.Buffer,value为[]byte的interface
 
-![](http://o8m1nd933.bkt.clouddn.com/blog/go/interface_values.png)
+![](http://oserror.com/images/interface_values.png)
 
 interface类型可以存放任意大的dynamic value，例如
 
@@ -1570,4 +1570,4 @@ func sqlQuote(x interface{}) string {
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)

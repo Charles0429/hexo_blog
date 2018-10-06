@@ -22,13 +22,13 @@ Paxos算法由lamport大师提出，目标是解决分布式环境下数据一�
 
 考虑下面的环境，如下图：
 
-![Distrubted Consensus Problem](http://o8m1nd933.bkt.clouddn.com/blog/paxos/distributed_consensus_problem.png)
+![Distrubted Consensus Problem](http://oserror.com/images/distributed_consensus_problem.png)
 
 在分布式环境中，为了保证服务的高可用，需要对数据做多个副本，一般是日志的方式来实现，即图中的log sequence，当某台机器宕机后，其上的请求可以自动的转到其他的Server上，同时会新找一台机器（为了保证副本数量足够），自动地把其他活着机器的日志同步过去，然后逐步回放到State Machine中去。如果Server 1,2,3中的日志是一致的话，可以保证这些Server回放到State Machine中的数据是一致的。那么问题来了，如何保证日志的一致性呢？这正是Paxos算法解决的问题，即如图中的Consensus Module所示，它们之间需要交互，保证日志中内容是完全一致的。
 
 进一步来看日志中的内容，如下：
 
-![Log Sequence](http://o8m1nd933.bkt.clouddn.com/blog/paxos/distributed_log_sequence.png)
+![Log Sequence](http://oserror.com/images/distributed_log_sequence.png)
 
 一个Log Sequence一般由多个Log Item组成，每个Log Item会包含一个Command，用于记录对应的客户端请求的命令，如图中的Add，Mov，Jmp和Set等等，每个Server会根据日志的内容和顺序，一个个的把命令回放到State Machine中。Paxos算法的目标就是为了保证每个Server上的Log Sequence中的Log Item中的Command和相对顺序完全一致，这样，在任意一台机器宕机之后，能保证可以快速地将服务切换到另外一台具有完全相同数据的Server上，从而达到高可用。
 
@@ -40,7 +40,7 @@ Paxos算法由lamport大师提出，目标是解决分布式环境下数据一�
 
 以一个例子描述确认Log Item的取值问题，如下：
 
-![Distributed Log Item Consensus](http://o8m1nd933.bkt.clouddn.com/blog/paxos/distributed_log_item_consensus.png)
+![Distributed Log Item Consensus](http://oserror.com/images/distributed_log_item_consensus.png)
 
 如上图所示，每个Server从客户端接受到的请求可能不一样，例如，图中的三个Server分别接收到Add，Mov和Jmp等三个不同的请求，而对于当对于当前的Log Item来讲，只能存储一个请求，而为了保证Log的一致性，又必须要Log Item中存储的Command是一致的，因此，三个Server需要协调，最终确定此Log Item存储哪一个请求，这个确定的过程就是一轮Basic Paxos过程。
 
@@ -71,7 +71,7 @@ Paxos算法由lamport大师提出，目标是解决分布式环境下数据一�
 
 首先，来看一个最简单的方案，如下：
 
-![Consensus one acceptor](http://o8m1nd933.bkt.clouddn.com/blog/paxos/consensus_one_acceptor.png)
+![Consensus one acceptor](http://oserror.com/images/consensus_one_acceptor.png)
 
 只有一个acceptor，这个acceptor只认第一个Proposer给它提出的value，例如，在上图中，如果Proposer1先把value提给acceptor，那么acceptor最终会选择该value，即Add。
 
@@ -87,7 +87,7 @@ Paxos算法由lamport大师提出，目标是解决分布式环境下数据一�
 
 但这会导致如下问题：
 
-![Paxos p1-split accept](http://o8m1nd933.bkt.clouddn.com/blog/paxos/consensus_acceptor_p1_split_vote.png)
+![Paxos p1-split accept](http://oserror.com/images/consensus_acceptor_p1_split_vote.png)
 
 假设Proposer 1,2,3分别提出Add，Mov和Jmp，且Proposeri{i=1,2,3}首先提给Accepti{i=1,2,3}，这样会导致最终每个acceptor都接受（accept）了不同的值，最终没有value被选择。
 
@@ -103,7 +103,7 @@ P1和某个value只有被多数派的acceptor接受后的条件表明，每个ac
 
 但P2a会存在如下问题：
 
-![P2a problem](http://o8m1nd933.bkt.clouddn.com/blog/paxos/paxos_p2a_problem.png)
+![P2a problem](http://oserror.com/images/paxos_p2a_problem.png)
 
 考虑以上场景，Proposal1的(10, Add)proposal被三个acceptor接受，但是，Proposer1和acceptor4之间网络不联通，导致acceptor4一致为接受任何的proposal。此时，有一个新的proposal2加入，并且能和acceptor4联通，并且，其提出的proposal为(11, Jmp)，根据P1原则，acceptor4必须要接受第一个接收到的proposal，即(11, Jmp)，导致其和P2a冲突。
 
@@ -122,7 +122,7 @@ P1和某个value只有被多数派的acceptor接受后的条件表明，每个ac
 
 因此，对于一个新提出的proposal，其必须要先学习到已经被或者将要被accept的id最大的value。要预测将要被accept的proposal是很困难的，但是，我们可以在acceptor中加限制，即，如果acceptor已经接受过(n,v)了，那么任何的id小于n的proposal都不会被接受，这样就能保证当前获取到的最大的id是正确的，举个例子说明：
 
-![P2c problem](http://o8m1nd933.bkt.clouddn.com/blog/paxos/paxos_p2c_problem.png)
+![P2c problem](http://oserror.com/images/paxos_p2c_problem.png)
 
 上述例子发生的场景如下：
 
@@ -132,7 +132,7 @@ P1和某个value只有被多数派的acceptor接受后的条件表明，每个ac
 
 而后，Proposal2达到acceptor3，如果acceptor3选择接受它，那么，会出现以下情况：
 
-![Paxos problem 1](http://o8m1nd933.bkt.clouddn.com/blog/paxos/paxos_p2c_problem1.png)
+![Paxos problem 1](http://oserror.com/images/paxos_p2c_problem1.png)
 
 Proposal2覆盖了Acceptor3已经接受过的值，导致Add成为新的多数派而被选择，不符合要求。实际上，在Proposal3提出时，由于Proposal2并没有被接受，导致，Proposal3只能学习到(1,Jmp)，从这个角度来讲，Proposal2是属于Proposal3提出后被确认的，因此，需要在acceptor加以限制，不再接受比其接受过的proposal id小的proposal。
 
@@ -211,7 +211,7 @@ Accept()
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

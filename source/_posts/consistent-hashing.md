@@ -21,7 +21,7 @@ tags:
 
 以分布式缓存场景为例，如下：
 
-![traditional hash](http://o8m1nd933.bkt.clouddn.com/blog/hash/traditional_hash.png)
+![traditional hash](http://oserror.com/images/traditional_hash.png)
 
 对于传统hash分区方法，针对某个(key,value)对，其存储的缓存节点下标可以用hash(key) % N，在正常情况下，能良好地工作。但是，当机器宕机宕机下线时，可能会涉及到大量的数据的迁移，因为机器数量减少为N-1，对应的hash取模后，大量的(key,value)对到Cache Server的映射发生改变，导致大量的(key,value)数据在Cache Server间迁移，以一个例子说明这个问题：
 
@@ -61,13 +61,13 @@ tags:
 
 为了解决上述问题，引入了consistent hash算法，如下图：
 
-![consistent hash](http://o8m1nd933.bkt.clouddn.com/blog/hash/consistent_hash.png)
+![consistent hash](http://oserror.com/images/consistent_hash.png)
 
 在consistent hash中，有一个hash环，代表一个范围，例如，可以取值为[0,2^64-1]。对于，每个Cache Server会根据hash函数算出一个整数值，最终落到hash环的某个点上，如图中的Cache Server 1-5。每个(key,value)对存储在hash环上顺时针的下一个Cache Server，举个例子，假设hash(Cache Server i) = Hi，i=1..5，如果(1,2)的hash取值处于[H1,H2)之间的话，那么它会存储在Cache Server2上，以此类推。
 
 因此，consistent hash能很好地应对Cache Server宕机情况，假设还是Cache Server 1宕机，如下图：
 
-![consistent hash server down](http://o8m1nd933.bkt.clouddn.com/blog/hash/consistent_hash_server_down.png)
+![consistent hash server down](http://oserror.com/images/consistent_hash_server_down.png)
 
 上图中Cache Server 1发生宕机的话，整个系统中只有(0,1)会从宕机的Cache Server 1迁移到Cache Server 2，比传统的hash算法会好很多。
 
@@ -95,7 +95,7 @@ Node7:1704
 
 下面做了一组实验，模拟了虚拟节点的数量从1,10,50,100,200,400,800的时候，各个Cache Server的负载均衡情况：
 
-![consistent hash data](http://o8m1nd933.bkt.clouddn.com/blog/hash/consistent_hash_data.png)
+![consistent hash data](http://oserror.com/images/consistent_hash_data.png)
 
 其中横坐标是每个Server的虚拟节点的数量，纵坐标是每个Server负载量的标准偏差，反映了Server之间负载的不均衡度，从图中看出，当虚拟节点的数量增加时，Server之间的不均衡度下降了。
 
@@ -106,7 +106,7 @@ Node7:1704
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

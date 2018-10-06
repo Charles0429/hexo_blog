@@ -37,7 +37,7 @@ tags:
 
 从日志复制一节可以知道，**在当前term**，一个leader知道一个log entry在复制到大多数server后，其就可以被提交了。当一个leader在提交log entry之前宕机掉，后面选举出来的leader会复制该log entry，但是，一个leader不能立马对之前term的log entry是否复制到大多数server来判断其是否已被提交。
 
-![raft_election_restriction](http://o8m1nd933.bkt.clouddn.com/blog/raft/raft_election_restriction.png)
+![raft_election_restriction](http://oserror.com/images/raft_election_restriction.png)
 
 如上图的例子，图（c）就发生了一个log entry虽然已经复制到大多数的server，但是仍然有可能被覆盖掉的可能，如图（d），整个发生的时序如下：
 
@@ -54,7 +54,7 @@ tags:
 
 以反证法来证明，假设Term T的leader T提交了一个log entry，但是此log entry没有在之后的某些term中，不妨设最小的Term U的leader U中不存在此log entry。证明如下：
 
-![raft_safety_argument](http://o8m1nd933.bkt.clouddn.com/blog/raft/raft_safety_argument.png)
+![raft_safety_argument](http://oserror.com/images/raft_safety_argument.png)
 
 1. 提交的log entry在leader U被选为主之前已经不存在了，因为leader不会删除或覆盖自己之前的log entry；
 2. leader T复制该log entry到大多数的server上，并且leader U获得了大多数server的选举，因此，至少有一个server（称为voter）同时复制了该log entry，并且选举U为leader，例如上图中的S3就是这样的server；
@@ -92,7 +92,7 @@ electionTimeout要小于MTBF的原因是，防止选举时，能正常工作的s
 
 在集群server发生变化时，不能一次性的把所有的server配置信息从老的替换为新的，因为，每台server的替换进度是不一样的，可能会导致出现双主的情况，如下图：
 
-![cluster_memship_wrong](http://o8m1nd933.bkt.clouddn.com/blog/raft/cluster_memship_wrong.png)
+![cluster_memship_wrong](http://oserror.com/images/cluster_memship_wrong.png)
 
 如上图，Server 1和Server 2可能以Cold配置选出一个主，而Server 3，Server 4和Server 5可能以Ｃnew选出另外一个主，导致出现双主。
 
@@ -101,7 +101,7 @@ raft使用两阶段的过程来完成上述转换：
 - 第一阶段，新老配置都存在，称为joint consensus
 - 第二阶段，替换成新配置
 
-![raft_memship_right](http://o8m1nd933.bkt.clouddn.com/blog/raft/raft_memship_right.png)
+![raft_memship_right](http://oserror.com/images/raft_memship_right.png)
 
 - leader首先创建Cold,new的log entry，然后提交（保证大多数的old和大多数的new都接收到该log entry）；
 - leader创建Cnew的log entry，然后提交，保证大多数的new都接收到了该log entry。
@@ -123,7 +123,7 @@ Raft为此新增了一个阶段，此阶段新的server不作为选举的server�
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

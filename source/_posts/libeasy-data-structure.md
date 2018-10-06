@@ -14,7 +14,7 @@ libeasy网络框架包含了基础数据结构、内存管理、线程池、io�
 
 # 2. 简单内存池
 
-![libeasy pool](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/libeasy_simple_pool.png)
+![libeasy pool](http://oserror.com/images/libeasy_simple_pool.png)
 
 libeasy内存池的内存分配情况如上图所示，主要有两种大小的内存，一种是默认的小块内存，称为Block；另一种是大块的内存，用于存放大块内存申请的数据部分，称为Large Data Area。
 
@@ -87,7 +87,7 @@ struct easy_buf_t {
 ```
 其中，最关键的三个字段，pos,last和end的关系如下图。
 
-![libeasy buf](http://o8m1nd933.bkt.clouddn.com/blog/libeasy/libeasy_buffer.png)
+![libeasy buf](http://oserror.com/images/libeasy_buffer.png)
 
 pos代表缓冲区的开始部分，last则表示缓冲区已经使用的部分，end表示缓冲区末尾的部分。
 
@@ -331,4 +331,4 @@ libeasy里解决冲突的方法采用的是开链法，即每个桶对应的其�
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)

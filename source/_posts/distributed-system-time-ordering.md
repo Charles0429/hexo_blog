@@ -40,7 +40,7 @@ happens before的定义如下(用->表示)
 
 且假定对于任意的a，都不满足a->a，因为一个事件不可能发生在本身之前。因此可以看出happens before是不满足自反性的partial ordering。
 
-![](http://o8m1nd933.bkt.clouddn.com/blog/time-clock/happens_before.png)
+![](http://oserror.com/images/happens_before.png)
 
 以一个例子来说明happens before关系，如上图，垂直线上代表一个进程，从下往上，时间依次增加，水平的距离代表空间的隔离。原点代表一个事件，而曲线代表一条消息。
 
@@ -68,7 +68,7 @@ if a->b then C(a) < C(b)
 - 如果a和b都是进程i中的事件，且a发生在b之前，那么Ci(a) < Ci(b)
 - 如果事件a发送消息给事件b，a属于进程i，b属于进程j，那么Ci(a) < Cj(b)
 
-![](http://o8m1nd933.bkt.clouddn.com/blog/time-clock/logical_time.png)
+![](http://oserror.com/images/logical_time.png)
 
 在上图中，水平虚线代表一次时钟的tick。为了满足上述第一个条件，那么同一个进程中的事件之间必须要有tick线隔开；为了满足第二个条件，那么消息线必须跨过tick线。
 
@@ -132,7 +132,7 @@ for any events a,b in S : if a==>b then C(a) < C(b)
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # References
 

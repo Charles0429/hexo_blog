@@ -11,7 +11,7 @@ tags:
 
 F1是Google自主研发的分布式数据库，采用计算与存储分离的架构，存储层采用Spanner作为分布式KV存储引擎，计算层则是F1团队研发的分布式SQL引擎，其整体架构如下图
 
-![F1 Arechitecture](http://o8m1nd933.bkt.clouddn.com/blog/f1_arechitecture.png)
+![F1 Arechitecture](http://oserror.com/images/f1_arechitecture.png)
 
 存储层向SQL层(F1 Server)提供KV操作接口，而SQL层负责将用户请求的关系Schema数据转换成KV存储格式。在此架构下，F1有以下特点
 
@@ -113,7 +113,7 @@ Example.index_age.35.Jane.Doe     null
 
 根据F1的架构特点，事务执行时，有可能出现不同的语句在不同的F1 Server执行的情况，那么不同的语句可能使用了不同版本的关系型Schema。为了设计和实现简单，F1只允许系统中同时出现两种不同版本的Schema，如下
 
-![F1 Schema change](http://o8m1nd933.bkt.clouddn.com/blog/f1_schema_change.png)
+![F1 Schema change](http://oserror.com/images/f1_schema_change.png)
 
 假设Schema版本S1 < S2，且S2比S1多了一张索引表，有如下执行过程
 
@@ -180,7 +180,7 @@ write-only->public的状态变化过程中，需要先保证对已有的数据�
 
 
 最后，博客推送的公众号欢迎大家关注
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 # 参考文献
 

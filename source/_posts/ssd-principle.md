@@ -24,17 +24,17 @@ SSD是目前商用服务器上非常流行的存储介质，因此，作为软�
 
 先来看顺序读和顺序写
 
-![Sequential Read](http://o8m1nd933.bkt.clouddn.com/blog/ssd/ssd_sequential_read.png)
+![Sequential Read](http://oserror.com/images/ssd_sequential_read.png)
 
-![Sequential Write](http://o8m1nd933.bkt.clouddn.com/blog/ssd/ssd_sequential_write.png)
+![Sequential Write](http://oserror.com/images/ssd_sequential_write.png)
 
 其中，Seagate ST3000DM001是HDD，其他的都是SSD。从上述两图中可以看出，HDD的顺序读速度差不多为最慢的SSD的一半，顺序写稍微好点，但也比大部分慢一倍左右的速度。
 
 再来看随机读和随机写
 
-![Random Read](http://o8m1nd933.bkt.clouddn.com/blog/ssd/ssd_random_read.png)
+![Random Read](http://oserror.com/images/ssd_random_read.png)
 
-![Random Write](http://o8m1nd933.bkt.clouddn.com/blog/ssd/ssd_random_write.png)
+![Random Write](http://oserror.com/images/ssd_random_write.png)
 
 可以看出，HDD的随机读的性能是普通SSD的几十分之一，随机写性能更差。
 
@@ -46,7 +46,7 @@ SSD是目前商用服务器上非常流行的存储介质，因此，作为软�
 
 SSD内部一般使用NAND Flash来作为存储介质，其逻辑结构如下：
 
-![NAND Flash](http://o8m1nd933.bkt.clouddn.com/blog/ssd/ssd_nand_flash.png)
+![NAND Flash](http://oserror.com/images/ssd_nand_flash.png)
 
 SSD中一般有多个NAND Flash，每个NAND Flash包含多个Block，每个Block包含多个Page。由于NAND的特性，其存取都必须以page为单位，即每次读写至少是一个page，通常地，每个page的大小为4k或者8k。另外，NAND还有一个特性是，其只能是读或写单个page，但不能覆盖写如某个page，必须先要清空里面的内容，再写入。由于清空内容的电压较高，必须是以block为单位。因此，没有空闲的page时，必须要找到没有有效内容的block，先擦写，然后再选择空闲的page写入。
 
@@ -72,7 +72,7 @@ SSD的写分为新写入和更新两种，处理流程不同。
 
 先看新写入的数据的流程，如下：
 
-![SSD New Write](http://o8m1nd933.bkt.clouddn.com/blog/ssd/ssd_new_write.png)
+![SSD New Write](http://oserror.com/images/ssd_new_write.png)
 
 假设新写入了一个page，其流程如下：
 
@@ -82,7 +82,7 @@ SSD的写分为新写入和更新两种，处理流程不同。
 
 而更新操作的流程如下：
 
-![SSD Leave Idle](http://o8m1nd933.bkt.clouddn.com/blog/ssd/ssd_write_leave_idle.png)
+![SSD Leave Idle](http://oserror.com/images/ssd_write_leave_idle.png)
 
 假设是更新了page G中的某些字节，流程如下：
 
@@ -98,11 +98,11 @@ SSD的写分为新写入和更新两种，处理流程不同。
 
 over-provisioning是指SSD实际的存储空间比可写入的空间要大，比如，一块可用容量为120G的SSD，实际空间可能有128G。为什么需要over-provisioning呢？请看如下例子：
 
-![SSD over-provisioning](http://o8m1nd933.bkt.clouddn.com/blog/ssd/ssd_over_provisioning.png)
+![SSD over-provisioning](http://oserror.com/images/ssd_over_provisioning.png)
 
 如上图所示，假设系统中就两个block，最终还剩下两个无效的page，此时，要写入一个新page，根据NAND原理，必须要先对两个无效的page擦除才能用于写入。此时，就需要用到SSD提供的额外空间，才能用garbage-collection方法整理出可用空间。
 
-![garbage collection](http://o8m1nd933.bkt.clouddn.com/blog/ssd/ssd_garbage_collection.png)
+![garbage collection](http://oserror.com/images/ssd_garbage_collection.png)
 
 garbage collection的整理流程如上图所示
 
@@ -129,11 +129,11 @@ SSD的garbage-collection会带来两个问题：
 
 假如一个NAND Flash总共有4096个block，每个block的擦写次数最大为10000。其中有3个文件，每个文件占用50个block，平均10分钟更新1个文件，假设没有均衡控制，那么只会3 * 50 + 50共200个block，则这个SSD的寿命如下：
 
-![no wear leveling](http://o8m1nd933.bkt.clouddn.com/blog/ssd/no_wear_leveling.png)
+![no wear leveling](http://oserror.com/images/no_wear_leveling.png)
 
 大约为278天。而如果是完美的损耗均衡控制，即4096个block都均衡地参与更新，则使用寿命如下：
 
-![perfect wear leveling](http://o8m1nd933.bkt.clouddn.com/blog/ssd/perfect_wear_leveling.png)
+![perfect wear leveling](http://oserror.com/images/perfect_wear_leveling.png)
 
 大约5689天。因此，设计一个好的损耗均衡控制算法是非常有必要的，主流的方法主要有两种：
 
@@ -180,7 +180,7 @@ static wear leveling的原理分为两块：
 PS:
 本博客更新会在第一时间推送到微信公众号，欢迎大家关注。
 
-![qocde_wechat](http://o8m1nd933.bkt.clouddn.com/blog/qcode_wechat.jpg)
+![qocde_wechat](http://oserror.com/images/qcode_wechat.jpg)
 
 
 # 参考文献
