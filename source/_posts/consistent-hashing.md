@@ -1,5 +1,6 @@
 ---
 title: consistent hash原理，优化及实现
+date: 2016-06-16 10:05:28
 categories: 分布式
 tags:
   - consistent hash

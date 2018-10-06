@@ -1,5 +1,6 @@
 ---
 title: golang实现Raft（一）：选主
+date: 2016-11-03 10:05:28
 categories: 分布式
 tags:
   - golang
