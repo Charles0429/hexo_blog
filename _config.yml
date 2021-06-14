@@ -77,8 +77,7 @@ theme: next
 deploy:
   type: git
   repo:
-    github: git@github.com:Charles0429/Charles0429.github.io.git
-    coding: git@git.coding.net:Charles0515/Charles0515.git
+    github: https://github_token@github.com/Charles0429/Charles0429.github.io.git
 
 disqus_shortname: oserror-blog
 baidu_analytics: e46cc2553dc9a888558de28aec7a1dc4
