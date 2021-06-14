@@ -7,7 +7,7 @@
   },
   "yuqueConfig": {
     "baseUrl": "https://www.yuque.com/api/v2",
-    "login": "u46795",
+    "login": "charles0429",
     "repo": "blog",
     "mdNameFormat": "title",
     "postPath": "source/_posts/yuque",
@@ -33,7 +33,8 @@
     "hexo-renderer-swig": "^1.1.0",
     "hexo-server": "^0.2.0"
   },
-   "devDependencies": {
+  "devDependencies": {
+    "cross-env": "^5.2.1",
     "yuque-hexo": "^1.7.0"
   }
 }
