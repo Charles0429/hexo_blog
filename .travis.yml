@@ -1,0 +1,26 @@
+language: node_js
+
+node_js:
+  - "10"
+
+# 設定需要快取的資料夾，減少往後建置時間
+  directories:
+    - node_modules
+
+branches:
+  only:
+    - master 
+
+before_install:
+  - export TZ='Asia/Shanghai'
+
+install:
+  - npm install hexo-cli -g
+  - npm install
+
+before_script:
+script:
+  - hexo clean
+  - hexo generate
+  - git clone --depth 1 -b master https://github.com/Charles0429/hexo_blog.git .deploy_git
+  - hexo deploy
