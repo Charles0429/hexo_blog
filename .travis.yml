@@ -28,3 +28,8 @@ script:
   - hexo generate
   - git clone --depth 1 -b master https://github.com/Charles0429/hexo_blog.git .deploy_git
   - hexo deploy
+notifications:
+  email:
+    - xiezhenjiang@gmail.com
+  on_success: change
+  on_failure: always
