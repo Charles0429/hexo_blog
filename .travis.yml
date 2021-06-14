@@ -20,4 +20,4 @@ node_js:
 os: linux
 script: 
   - "hexo clean"
-  - "YUQUE_TOKEN=$yuque_token npm run deploy"
+  - "YUQUE_TOKEN=$YUQUE_TOKEN npm run deploy"
