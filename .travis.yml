@@ -20,6 +20,7 @@ os: linux
 script: 
   - "hexo clean"
   - "hexo generate"
-  - "git clone --depth 1 -b master https://github.com/Charles0429/hexo_blog.git .deploy_git"
+  - "git clone -b master https://github.com/Charles0429/hexo_blog.git .deploy_git"
+  - "cd deploy_git"
   - "hexo deploy"
 
