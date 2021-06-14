@@ -12,6 +12,7 @@ cache:
     - node_modules
 install: 
   - "npm install hexo-cli -g"
+  - "npm install cross-env"
   - "npm install"
 language: node_js
 node_js: 
