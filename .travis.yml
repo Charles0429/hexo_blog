@@ -1,35 +1,30 @@
-language: node_js
-
-node_js:
-  - "10"
-
-# 設定需要快取的資料夾，減少往後建置時間
-  directories:
+--- 
+before_script: 
+  - "export TZ='Asia/Shanghai'"
+  - "git config user.name \"Charles0429\""
+  - "git config user.email \"xiezhenjiang@gmail.com\""
+  - "sed -i \"s/github_token/${GH_TOKEN}/g\" _config.yml || exit 1"
+branches: 
+  only: 
+    - master
+cache: 
+  directories: 
     - node_modules
-
-branches:
-  only:
-    - master 
-
-before_install:
-  - export TZ='Asia/Shanghai'
-
-install:
-  - npm install hexo-cli -g
-  - npm install
-
-before_script:
-  - git config user.name "Charles0429"
-  - git config user.email "xiezhenjiang@gmail.com"
-  # 替换同目录下的_config.yml文件中github_token字符串为travis后台刚才配置的变量，注>意此处sed命令用了双引号。单引号无效！
-  - sed -i "s/github_token/${GH_TOKEN}/g" _config.yml || exit 1
-script:
-  - hexo clean
-  - hexo generate
-  - git clone --depth 1 -b master https://github.com/Charles0429/hexo_blog.git .deploy_git
-  - hexo deploy
-notifications:
-  email:
+install: 
+  - "npm install hexo-cli -g"
+  - "npm install"
+language: node_js
+node_js: 
+  - 10
+notifications: 
+  email: 
     - xiezhenjiang@gmail.com
-  on_success: change
   on_failure: always
+  on_success: change
+os: linux
+script: 
+  - "hexo clean"
+  - "hexo generate"
+  - "git clone --depth 1 -b master https://github.com/Charles0429/hexo_blog.git .deploy_git"
+  - "hexo deploy"
+
