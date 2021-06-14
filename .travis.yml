@@ -19,6 +19,6 @@ node_js:
 os: linux
 script: 
   - "hexo clean"
+  - cross-env YUQUE_TOKEN=$yuque_token npm run deploy
   - "hexo generate"
   - "hexo deploy"
-
