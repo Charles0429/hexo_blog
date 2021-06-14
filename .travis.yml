@@ -15,7 +15,7 @@ install:
   - "npm install"
 language: node_js
 node_js: 
-  - 10
+  - 14
 os: linux
 script: 
   - "hexo clean"
