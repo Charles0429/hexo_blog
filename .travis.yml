@@ -20,7 +20,5 @@ os: linux
 script: 
   - "hexo clean"
   - "hexo generate"
-  - "git clone -b master https://github.com/Charles0429/hexo_blog.git .deploy_git"
-  - "cd deploy_git"
   - "hexo deploy"
 
